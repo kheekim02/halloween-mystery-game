@@ -220,6 +220,7 @@
     let currentUser = null; // Character ID
     let currentTab = 'role'; // 'role', 'story', 'clues', 'players', 'vote'
     let currentStage = 0; // 0 to 6
+    let unlockedStage = 0; // 최대 해금된 단계 (이전 단계 복습만 가능, 미래 단계는 순차 해금)
     let userCostumes = {}; // { char_id: '드라큘라' }
     let votes = {}; // { voter_id: target_id } -> final votes
     let midtermVotes = {}; // { voter_id: target_id } -> 1차 중간 투표
@@ -256,13 +257,14 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset (v1.3.0: lock reveal stage until vote & candidate button wrapping fix)
-      const APP_VERSION = 'v1.3.0-final';
+      // Clean production reset (v1.4.0: progressive stage unlocking & unified voting actions)
+      const APP_VERSION = 'v1.4.0-progressive';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);
         currentUser = null;
         currentStage = 0;
+        unlockedStage = 0;
         votes = {};
         midtermVotes = {};
         isMidtermRevealed = false;
@@ -280,6 +282,13 @@
 
       const savedStage = localStorage.getItem('mystery_stage');
       if (savedStage !== null) currentStage = parseInt(savedStage, 10);
+
+      const savedUnlocked = localStorage.getItem('mystery_unlocked_stage');
+      if (savedUnlocked !== null) {
+        unlockedStage = parseInt(savedUnlocked, 10);
+      } else {
+        unlockedStage = currentStage;
+      }
 
       const savedVotes = localStorage.getItem('mystery_votes');
       if (savedVotes) votes = JSON.parse(savedVotes);
@@ -307,6 +316,7 @@
       if (currentUser) localStorage.setItem('mystery_user', currentUser);
       localStorage.setItem('mystery_costumes', JSON.stringify(userCostumes));
       localStorage.setItem('mystery_stage', currentStage.toString());
+      localStorage.setItem('mystery_unlocked_stage', unlockedStage.toString());
       localStorage.setItem('mystery_votes', JSON.stringify(votes));
       localStorage.setItem('mystery_midterm_votes', JSON.stringify(midtermVotes));
       localStorage.setItem('mystery_midterm_revealed', isMidtermRevealed.toString());
@@ -419,28 +429,40 @@
       if (badge) badge.innerText = count.toString();
     }
 
+    const STAGE_NAMES = [
+      '0. 사건발생',
+      '1. 참가자 소개',
+      '2. 1차 구역수색',
+      '3. 1차 중간투표',
+      '4. 2차 심층수색',
+      '5. 최종투표',
+      '6. 진범공개'
+    ];
+
     function updateStageTabStyles() {
       document.querySelectorAll('.stage-tab').forEach(tab => {
         const stageNum = parseInt(tab.dataset.stage, 10);
-        const isLocked = (stageNum === 6 && currentStage < 5);
+        const isUnlocked = stageNum <= unlockedStage;
+        const isCurrent = stageNum === currentStage;
 
-        if (stageNum === 6) {
-          tab.innerHTML = isLocked ? '<i class="fa-solid fa-lock text-[9px] mr-1"></i>6. 진범공개' : '6. 진범공개';
-        }
-
-        if (stageNum === currentStage) {
-          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs shrink-0';
-        } else if (isLocked) {
-          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-500 opacity-40 cursor-not-allowed text-xs border border-transparent shrink-0';
+        if (!isUnlocked) {
+          // 아직 열리지 않은 미래 단계: 스포일러 방지를 위해 잠금 표시
+          tab.innerHTML = `<i class="fa-solid fa-lock text-[8px] mr-1"></i>${stageNum}단계 (잠김)`;
+          tab.className = 'stage-tab px-2.5 py-1 rounded-full transition-all text-gray-500 opacity-30 cursor-not-allowed text-xs border border-transparent shrink-0';
         } else {
-          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs shrink-0';
+          tab.innerHTML = STAGE_NAMES[stageNum];
+          if (isCurrent) {
+            tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs shrink-0 shadow-sm';
+          } else {
+            tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white bg-gothic-900/60 border border-gray-800 text-xs shrink-0';
+          }
         }
       });
     }
 
     function changeStage(newStage) {
-      if (newStage === 6 && currentStage < 5) {
-        showToast("🔒 최종 투표(5단계)를 마친 후에 진범을 공개할 수 있습니다!");
+      if (newStage > unlockedStage) {
+        showToast(`🔒 이전 단계를 먼저 완료해야 ${newStage}단계로 진행할 수 있습니다!`);
         return;
       }
 
@@ -468,6 +490,14 @@
       } else {
         renderCurrentTab();
       }
+    }
+
+    function advanceToStage(nextStage) {
+      if (nextStage > unlockedStage) {
+        unlockedStage = nextStage;
+      }
+      changeStage(nextStage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setTab(tabName) {
@@ -682,6 +712,13 @@ ${char.secret}
             }).join('')}
           </div>
         </div>
+
+        <!-- ADVANCE BUTTON TO STAGE 1 -->
+        <div class="pt-2 text-center">
+          <button onclick="advanceToStage(1)" class="w-full bg-gradient-to-r from-pumpkin-600 to-amber-600 hover:from-pumpkin-500 hover:to-amber-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-pumpkin-900/40 flex items-center justify-center gap-2">
+            <span>확인 완료! 1. 참가자 소개 & 알리바이 확인하러 가기 ➔</span>
+          </button>
+        </div>
       `;
       container.appendChild(card);
     }
@@ -854,6 +891,15 @@ ${char.secret}
                 </button>
               </div>
             ` : ''}
+
+            ${currentStage === 2 ? `
+              <div class="pt-2 text-center">
+                <button onclick="advanceToStage(3)" class="w-full bg-gradient-to-r from-cyan-700 to-amber-600 hover:from-cyan-600 hover:to-amber-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-amber-900/40 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-check-to-slot"></i>
+                  <span>1차 수색 완료! 3. 중간 의심자 투표 진행하기 ➔</span>
+                </button>
+              </div>
+            ` : ''}
           </div>
 
           <!-- SECTION 3: PHASE 2 SUSPECT INVESTIGATION (UNLOCKED AT STAGE >= 4) -->
@@ -956,6 +1002,14 @@ ${char.secret}
                     `;
                   }
                 }).join('')}
+              </div>
+
+              <!-- ADVANCE BUTTON TO STAGE 5 -->
+              <div class="pt-3 text-center">
+                <button onclick="advanceToStage(5)" class="w-full bg-gradient-to-r from-amber-600 to-crimson-600 hover:from-amber-500 hover:to-crimson-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-crimson-900/40 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-gavel"></i>
+                  <span>2차 심층 수색 완료! 5. 최후 변론 & 최종 투표 진행하기 ➔</span>
+                </button>
               </div>
             `}
           </div>
@@ -1272,6 +1326,14 @@ ${char.secret}
             `;
           }).join('')}
         </div>
+
+        <!-- ADVANCE BUTTON TO STAGE 2 -->
+        <div class="pt-2 text-center">
+          <button onclick="advanceToStage(2)" class="w-full bg-gradient-to-r from-pumpkin-600 to-cyan-600 hover:from-pumpkin-500 hover:to-cyan-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-pumpkin-900/40 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-compass-drafting"></i>
+            <span>탐문 완료! 2. 1차 구역 수색(블루프린트) 시작하기 ➔</span>
+          </button>
+        </div>
       `;
       container.appendChild(card);
     }
@@ -1411,7 +1473,7 @@ ${char.secret}
               <!-- Next Phase Button -->
               <div class="pt-2 text-center space-y-2 border-t border-gray-800/80">
                 <p class="text-xs text-gray-300">중간 투표 결과를 확인했으니 이제 2차 심층 수색에서 의심자를 집중 파헤치세요!</p>
-                <button onclick="changeStage(4)" class="w-full bg-gradient-to-r from-pumpkin-600 to-amber-600 hover:from-pumpkin-500 hover:to-amber-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg">
+                <button onclick="advanceToStage(4)" class="w-full bg-gradient-to-r from-pumpkin-600 to-amber-600 hover:from-pumpkin-500 hover:to-amber-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg">
                   4. 2차 심층 수색 단계로 이동 (용의자 2인 지목) ➔
                 </button>
               </div>
@@ -1635,12 +1697,32 @@ ${char.secret}
         </div>
 
         ${currentStage === 5 ? `
-          <!-- UNLOCK REVEAL BUTTON FOR STAGE 5 -->
-          <div class="pt-2 text-center">
-            <button onclick="changeStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-crimson-900/40 flex items-center justify-center gap-2">
-              <i class="fa-solid fa-skull"></i>
-              <span>투표 완료! 6. 진범 공개 & 에필로그 확인하기 ➔</span>
-            </button>
+          <!-- UNIFIED STAGE 5 ACTION / WAITING BOX -->
+          <div class="pt-3">
+            ${myFinalVote ? `
+              <div class="card-glass rounded-2xl p-4 border border-crimson-500/60 bg-crimson-950/30 text-center space-y-2.5 shadow-xl animate-fade-in">
+                <div class="text-xs font-bold text-crimson-400 flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-circle-check text-sm"></i>
+                  <span>나의 최종 비밀 투표 완료!</span>
+                </div>
+                <p class="text-xs text-gray-300 leading-relaxed">
+                  친구들이 모두 투표를 마칠 때까지 잠시 기다려 주세요.<br>
+                  <strong class="text-white">진행자(호스트)가 "전원 투표 완료되었습니다"라고 구두 신호를 주면</strong> 아래 버튼을 터치하세요!
+                </p>
+                <button onclick="advanceToStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-crimson-900/50 flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-skull"></i>
+                  <span>[호스트 신호 시 터치] 6. 진범 공개 & 최종 결과 확인하기 ➔</span>
+                </button>
+              </div>
+            ` : `
+              <div class="p-3.5 bg-gothic-900/80 rounded-xl border border-gray-800 text-center space-y-1">
+                <p class="text-xs text-pumpkin-400 font-bold flex items-center justify-center gap-1.5">
+                  <i class="fa-solid fa-hand-point-up"></i>
+                  <span>위 목록에서 서준을 살해한 진범 1명을 터치하여 최종 투표하세요.</span>
+                </p>
+                <p class="text-[11px] text-gray-400">내 투표를 마쳐야 진범 공개 버튼이 활성화됩니다.</p>
+              </div>
+            `}
           </div>
         ` : ''}
 
@@ -1790,14 +1872,7 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
                 </p>
               </div>
             </div>
-          ` : `
-            <div class="text-center space-y-2">
-              <p class="text-xs text-gray-400">모두 최종 투표를 마쳤다면 상단 탭에서 <strong class="text-pumpkin-400">"6. 진범공개"</strong>를 누르거나 아래 버튼을 누르세요.</p>
-              <button onclick="changeStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-crimson-600/30">
-                🚨 전원 투표 완료! 최종 득표 결과 & 진범 공개하기 ➔
-              </button>
-            </div>
-          `}
+          ` : ''}
         </div>
       `;
       container.appendChild(card);
