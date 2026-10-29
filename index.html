@@ -256,8 +256,8 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset (v1.2.0: private timeline & interactive interrogation notebooks)
-      const APP_VERSION = 'v1.2.0-clean';
+      // Clean production reset (v1.3.0: lock reveal stage until vote & candidate button wrapping fix)
+      const APP_VERSION = 'v1.3.0-final';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);
@@ -325,7 +325,7 @@
         const isSelected = currentUser === char.id;
 
         const btn = document.createElement('div');
-        btn.className = `p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+        btn.className = `p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between gap-2.5 ${
           isSelected 
             ? 'bg-pumpkin-500/20 border-pumpkin-500 text-white' 
             : 'bg-gothic-900/60 border-gray-800 text-gray-300 hover:border-gray-700'
@@ -334,20 +334,20 @@
         btn.id = `modal-btn-${char.id}`;
 
         btn.innerHTML = `
-          <div class="flex items-center space-x-2.5">
-            <div class="w-8 h-8 rounded-full bg-gothic-800 border border-pumpkin-500/30 flex items-center justify-center text-xs font-bold text-pumpkin-400">
+          <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+            <div class="w-8 h-8 rounded-full shrink-0 bg-gothic-800 border border-pumpkin-500/30 flex items-center justify-center text-xs font-bold text-pumpkin-400">
               ${char.real_name.charAt(0)}
             </div>
-            <div>
-              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+            <div class="min-w-0 flex-1">
+              <div class="text-xs font-bold text-white flex items-center gap-1.5 truncate">
                 <span>${char.real_name}</span>
-                <span class="text-[10px] text-gray-400">(${char.birth_year})</span>
+                <span class="text-[10px] text-gray-400">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
               </div>
-              <div class="text-[10px] text-pumpkin-400/90">${char.character_name} · ${char.role_title}</div>
+              <div class="text-[10px] text-pumpkin-400/90 truncate">${char.character_name} · ${char.role_title}</div>
             </div>
           </div>
-          <div class="text-right">
-            <span class="text-[10px] px-2.5 py-1 rounded-full bg-gothic-800 border border-gray-700 text-pumpkin-400 font-semibold">
+          <div class="shrink-0 whitespace-nowrap">
+            <span class="text-[10px] px-2.5 py-1 rounded-full bg-gothic-800 border border-gray-700 text-pumpkin-400 font-semibold whitespace-nowrap block">
               선택
             </span>
           </div>
@@ -422,15 +422,28 @@
     function updateStageTabStyles() {
       document.querySelectorAll('.stage-tab').forEach(tab => {
         const stageNum = parseInt(tab.dataset.stage, 10);
+        const isLocked = (stageNum === 6 && currentStage < 5);
+
+        if (stageNum === 6) {
+          tab.innerHTML = isLocked ? '<i class="fa-solid fa-lock text-[9px] mr-1"></i>6. 진범공개' : '6. 진범공개';
+        }
+
         if (stageNum === currentStage) {
-          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs';
+          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs shrink-0';
+        } else if (isLocked) {
+          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-500 opacity-40 cursor-not-allowed text-xs border border-transparent shrink-0';
         } else {
-          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs';
+          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs shrink-0';
         }
       });
     }
 
     function changeStage(newStage) {
+      if (newStage === 6 && currentStage < 5) {
+        showToast("🔒 최종 투표(5단계)를 마친 후에 진범을 공개할 수 있습니다!");
+        return;
+      }
+
       currentStage = newStage;
       if (newStage === 6) {
         isFinalRevealed = true;
@@ -1417,30 +1430,33 @@ ${char.secret}
 
               return `
                 <div onclick="submitMidtermVote('${char.id}')" 
-                     class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between ${
+                     class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
                        isSelected 
                          ? 'border-amber-500 bg-amber-950/40 shadow-md shadow-amber-600/20' 
                          : 'border-gray-800 hover:border-gray-700'
                      }">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 rounded-lg ${isSelected ? 'bg-amber-600 text-white font-bold' : 'bg-gothic-900 text-gray-400'} flex items-center justify-center text-xs font-bold">
+                  <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+                    <div class="w-8 h-8 rounded-lg shrink-0 ${isSelected ? 'bg-amber-600 text-white font-bold' : 'bg-gothic-900 border border-gray-700 text-gray-400'} flex items-center justify-center text-xs font-bold">
                       ${isSelected ? '✓' : char.real_name.charAt(0)}
                     </div>
-                    <div>
-                      <div class="text-sm font-bold text-white flex items-center gap-1.5">
+                    <div class="min-w-0 flex-1">
+                      <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 truncate">
                         <span>${char.real_name}</span>
-                        ${isMe ? '<span class="text-xs text-gray-400">(나)</span>' : ''}
+                        <span class="text-[10px] text-gray-400 font-normal">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
+                        ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1 rounded border border-pumpkin-500/30 shrink-0">나</span>' : ''}
                       </div>
-                      <p class="text-xs text-amber-400/90">${char.character_name} · ${char.role_title}</p>
+                      <p class="text-[11px] text-amber-400/90 truncate">${char.character_name} · ${char.role_title}</p>
                     </div>
                   </div>
-                  <div>
+                  <div class="shrink-0 whitespace-nowrap">
                     ${isSelected ? `
-                      <span class="text-xs font-bold text-amber-400 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-500/40">
+                      <span class="text-xs font-bold text-amber-400 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-500/40 whitespace-nowrap block">
                         내가 지목함
                       </span>
                     ` : `
-                      <span class="text-xs text-gray-400 hover:text-white">지목하기</span>
+                      <span class="text-xs text-gray-300 hover:text-white bg-gothic-800 border border-gray-700 hover:border-amber-500 px-2.5 py-1 rounded-full whitespace-nowrap block transition-colors">
+                        지목하기
+                      </span>
                     `}
                   </div>
                 </div>
@@ -1584,36 +1600,49 @@ ${char.secret}
 
             return `
               <div onclick="submitFinalVote('${char.id}')" 
-                   class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between ${
+                   class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between gap-2.5 ${
                      isSelected 
                        ? 'border-crimson-500 bg-crimson-900/30 shadow-md shadow-crimson-600/20' 
                        : 'border-gray-800 hover:border-gray-700'
                    }">
-                <div class="flex items-center space-x-3">
-                  <div class="w-8 h-8 rounded-lg ${isSelected ? 'bg-crimson-600 text-white' : 'bg-gothic-900 text-gray-400'} flex items-center justify-center text-xs font-bold">
+                <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+                  <div class="w-8 h-8 rounded-lg shrink-0 ${isSelected ? 'bg-crimson-600 text-white font-bold' : 'bg-gothic-900 border border-gray-700 text-gray-400'} flex items-center justify-center text-xs font-bold">
                     ${isSelected ? '✓' : char.real_name.charAt(0)}
                   </div>
-                  <div>
-                    <div class="text-sm font-bold text-white flex items-center gap-1.5">
+                  <div class="min-w-0 flex-1">
+                    <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 truncate">
                       <span>${char.real_name}</span>
-                      ${isMe ? '<span class="text-xs text-gray-400">(나)</span>' : ''}
+                      <span class="text-[10px] text-gray-400 font-normal">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
+                      ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1 rounded border border-pumpkin-500/30 shrink-0">나</span>' : ''}
                     </div>
-                    <p class="text-xs text-pumpkin-400/90">${char.character_name}</p>
+                    <p class="text-[11px] text-pumpkin-400/90 truncate">${char.character_name} · ${char.role_title}</p>
                   </div>
                 </div>
-                <div>
+                <div class="shrink-0 whitespace-nowrap">
                   ${isSelected ? `
-                    <span class="text-xs font-bold text-crimson-400 bg-crimson-900/40 px-2.5 py-1 rounded-full border border-crimson-500/50">
+                    <span class="text-xs font-bold text-crimson-400 bg-crimson-900/40 px-2.5 py-1 rounded-full border border-crimson-500/50 whitespace-nowrap block">
                       최종 지목 완료
                     </span>
                   ` : `
-                    <span class="text-xs text-gray-400 hover:text-white">지목하기</span>
+                    <span class="text-xs text-gray-300 hover:text-white bg-gothic-800 border border-gray-700 hover:border-crimson-500 px-2.5 py-1 rounded-full whitespace-nowrap block transition-colors">
+                      지목하기
+                    </span>
                   `}
                 </div>
               </div>
             `;
           }).join('')}
         </div>
+
+        ${currentStage === 5 ? `
+          <!-- UNLOCK REVEAL BUTTON FOR STAGE 5 -->
+          <div class="pt-2 text-center">
+            <button onclick="changeStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-crimson-900/40 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-skull"></i>
+              <span>투표 완료! 6. 진범 공개 & 에필로그 확인하기 ➔</span>
+            </button>
+          </div>
+        ` : ''}
 
         <!-- STAGE 6 EPILOGUE (진범 공개) -->
         <div class="pt-4 border-t border-gray-800">
