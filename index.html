@@ -91,8 +91,8 @@
     
     <div class="flex items-center space-x-2">
       <!-- 60m TIMER BADGE -->
-      <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex items-center space-x-1.5 bg-gothic-800 border border-pumpkin-500/30 hover:border-pumpkin-500 px-2.5 py-1 rounded-full text-xs font-mono text-pumpkin-400 shadow-inner">
-        <i class="fa-solid fa-clock text-[11px] text-pumpkin-500"></i>
+      <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex items-center space-x-1.5 bg-gothic-800 border border-pumpkin-500/40 hover:border-pumpkin-500 px-2.5 py-1 rounded-full text-xs font-mono text-pumpkin-400 shadow-inner group transition-all" title="클릭하여 타이머 시작/일시정지">
+        <span id="timer-icon" class="text-[9px] text-pumpkin-500">▶</span>
         <span id="timer-display" class="font-bold">60:00</span>
       </button>
 
@@ -109,14 +109,18 @@
   </header>
 
   <!-- STAGE PROGRESS BAR -->
-  <div class="bg-gothic-800/80 px-4 py-2 border-b border-gray-800 flex items-center justify-between overflow-x-auto text-[11px] no-scrollbar">
-    <div class="flex items-center space-x-2 min-w-max" id="stage-tabs-container">
-      <button onclick="changeStage(0)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40" data-stage="0">0. 사건발생</button>
-      <button onclick="changeStage(1)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="1">1. 참가자&코스튬</button>
-      <button onclick="changeStage(2)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="2">2. 1차 단서수색</button>
-      <button onclick="changeStage(3)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="3">3. 2차 심층수색</button>
-      <button onclick="changeStage(4)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="4">4. 비밀투표</button>
-      <button onclick="changeStage(5)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="5">5. 진범공개</button>
+  <div class="bg-gothic-800/90 px-3 py-1.5 border-b border-gray-800 flex items-center gap-2 overflow-x-auto text-[11px] no-scrollbar">
+    <div class="flex items-center gap-1 text-[10px] text-gray-400 font-bold shrink-0 pl-1">
+      <i class="fa-solid fa-flag-checkered text-pumpkin-500"></i>
+      <span>진행:</span>
+    </div>
+    <div class="flex items-center space-x-1.5 min-w-max" id="stage-tabs-container">
+      <button onclick="changeStage(0)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40" data-stage="0">0. 사건발생</button>
+      <button onclick="changeStage(1)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="1">1. 참가자&코스튬</button>
+      <button onclick="changeStage(2)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="2">2. 1차 단서수색</button>
+      <button onclick="changeStage(3)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="3">3. 2차 심층수색</button>
+      <button onclick="changeStage(4)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="4">4. 비밀투표</button>
+      <button onclick="changeStage(5)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="5">5. 진범공개</button>
     </div>
   </div>
 
@@ -205,13 +209,6 @@
         <p class="text-xs text-gray-200 leading-relaxed whitespace-pre-line" id="modal-clue-desc"></p>
       </div>
 
-      <div class="p-3 bg-crimson-900/20 rounded-xl border border-crimson-500/30">
-        <div class="flex items-center space-x-1.5 text-crimson-400 text-xs font-bold mb-1">
-          <i class="fa-solid fa-lightbulb"></i>
-          <span>수사 힌트 / 추리 분석</span>
-        </div>
-        <p class="text-[11px] text-gray-300 leading-normal" id="modal-clue-hint"></p>
-      </div>
 
       <button onclick="closeClueModal()" class="w-full bg-gothic-800 hover:bg-gothic-700 text-gray-200 font-semibold py-2 rounded-xl text-xs transition-all border border-gray-700">
         닫기
@@ -358,6 +355,11 @@
       document.getElementById('role-select-modal').classList.add('hidden');
       renderHeader();
       renderCurrentTab();
+
+      // 역할 선택 완료 시 60분 타이머 자동 시작
+      if (!isTimerRunning) {
+        toggleTimer();
+      }
     }
 
     function renderHeader() {
@@ -401,7 +403,19 @@
       saveLocalStorage();
       updateStageTabStyles();
       updateClueBadgeCount();
-      renderCurrentTab();
+      
+      // 상단 단계 클릭 시 해당 진행 단계 탭으로 즉시 화면 전환
+      if (newStage === 0) {
+        setTab('story');
+      } else if (newStage === 1) {
+        setTab('players');
+      } else if (newStage === 2 || newStage === 3) {
+        setTab('clues');
+      } else if (newStage === 4 || newStage === 5) {
+        setTab('vote');
+      } else {
+        renderCurrentTab();
+      }
     }
 
     function setTab(tabName) {
@@ -561,60 +575,93 @@ ${char.mission}
         </div>
 
         <!-- SCENE BLUEPRINT / MAP -->
-        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-2">
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-3">
           <div class="flex items-center justify-between">
             <h4 class="text-xs font-bold text-pumpkin-400 flex items-center gap-1.5">
               <i class="fa-solid fa-map-location-dot"></i>
               <span>루프탑 파티룸 '루나 하우스' 현장 배치도</span>
             </h4>
-            <span class="text-[10px] text-gray-400">클릭하여 단서 확인</span>
+            <span class="text-[10px] text-gray-400">구역 터치 시 단서 이동</span>
+          </div>
+
+          <!-- Floor Plan Graphic Box -->
+          <div class="relative w-full rounded-xl overflow-hidden border border-gray-700 bg-gothic-950/80 aspect-[16/9] flex items-center justify-center">
+            <img src="floor_plan.png" alt="루나 하우스 현장 배치도" 
+                 class="w-full h-full object-cover" 
+                 onerror="this.style.display='none'; document.getElementById('floor-plan-placeholder').style.display='flex';" />
+            <div id="floor-plan-placeholder" class="hidden absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-gradient-to-br from-gothic-900 to-gothic-950">
+              <i class="fa-solid fa-compass-drafting text-pumpkin-500/60 text-2xl mb-1"></i>
+              <span class="text-xs font-bold text-white tracking-wide">루나 하우스 수사 구역도</span>
+              <span class="text-[10px] text-gray-400 mt-0.5">VIP룸 · 바 카운터 · 테라스 · 복도 · 포토존 · 화장실</span>
+            </div>
           </div>
           
           <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
-              <div class="font-bold text-crimson-400 flex items-center gap-1 mb-1">
-                <span>🛋️ VIP 휴게실 소파</span>
-                <span class="text-[9px] bg-crimson-500/20 px-1 rounded">시신</span>
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-crimson-500 cursor-pointer transition-all">
+              <div class="font-bold text-crimson-400 flex items-center gap-1 mb-0.5">
+                <span>🛋️ VIP 휴게실</span>
+                <span class="text-[9px] bg-crimson-500/20 px-1 py-0.2 rounded text-crimson-300 font-bold">시신</span>
               </div>
-              <p class="text-[10px] text-gray-400">서준이 엎드려 쓰러진 소파와 바닥</p>
+              <p class="text-[10px] text-gray-400">소파, 유리 테이블, 해골 빨대 잔</p>
             </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
-              <div class="font-bold text-pumpkin-400 flex items-center gap-1 mb-1">
-                <span>🍸 바 카운터</span>
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
+              <div class="font-bold text-pumpkin-400 flex items-center gap-1 mb-0.5">
+                <span>🍸 바 카운터 & 솥</span>
               </div>
-              <p class="text-[10px] text-gray-400">붉은 칵테일 잔과 얼음통</p>
+              <p class="text-[10px] text-gray-400">마녀 솥 볼, 공용 종이 빨대통</p>
             </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
-              <div class="font-bold text-purple-400 flex items-center gap-1 mb-1">
-                <span>🌙 야외 테라스</span>
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-purple-500 cursor-pointer transition-all">
+              <div class="font-bold text-purple-400 flex items-center gap-1 mb-0.5">
+                <span>🌙 루프탑 테라스</span>
               </div>
-              <p class="text-[10px] text-gray-400">재떨이와 담배꽁초, 의문의 가루</p>
+              <p class="text-[10px] text-gray-400">방콕 티켓, 담배꽁초, 난간</p>
             </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
-              <div class="font-bold text-yellow-400 flex items-center gap-1 mb-1">
-                <span>🎃 메인 바 & 테이블</span>
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-yellow-500 cursor-pointer transition-all">
+              <div class="font-bold text-yellow-400 flex items-center gap-1 mb-0.5">
+                <span>🚪 현관 복도</span>
               </div>
-              <p class="text-[10px] text-gray-400">마녀 솥 칵테일과 할로윈 데코 소품</p>
+              <p class="text-[10px] text-gray-400">배달 야식 통화지, 와인 자국</p>
+            </div>
+
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-blue-500 cursor-pointer transition-all">
+              <div class="font-bold text-blue-400 flex items-center gap-1 mb-0.5">
+                <span>📸 포토존 & 배전반</span>
+              </div>
+              <p class="text-[10px] text-gray-400">삼각대, 암전 조명 스위치</p>
+            </div>
+
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-emerald-500 cursor-pointer transition-all">
+              <div class="font-bold text-emerald-400 flex items-center gap-1 mb-0.5">
+                <span>🚻 안쪽 화장실</span>
+              </div>
+              <p class="text-[10px] text-gray-400">세면대, 주현의 구토 알리바이</p>
             </div>
           </div>
         </div>
 
         <!-- TIMELINE -->
         <div class="card-glass rounded-2xl p-4 border border-gray-800 space-y-3">
-          <div class="flex items-center space-x-2 text-xs font-bold text-white">
-            <i class="fa-solid fa-timeline text-pumpkin-500"></i>
-            <span>오늘 밤 사건 타임라인 (21:30 ~ 22:50)</span>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-bold text-white">
+              <i class="fa-solid fa-timeline text-pumpkin-500"></i>
+              <span>오늘 밤 사건 타임라인 (21:30 ~ 22:50)</span>
+            </div>
+            <span class="text-[10px] text-pumpkin-400/90 font-mono">24H 수사 기록</span>
           </div>
 
-          <div class="space-y-2 border-l border-pumpkin-500/30 pl-3 ml-2 text-xs">
+          <div class="space-y-2 border-l-2 border-pumpkin-500/30 pl-3 ml-2 text-xs">
             ${GAME_DATA.timeline.map(t => `
-              <div class="relative group">
-                <div class="absolute -left-[19px] top-1.5 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900"></div>
-                <div class="font-mono text-[11px] text-pumpkin-400 font-bold">${t.time}</div>
-                <p class="text-gray-300 text-[11px] mt-0.5 leading-snug">${t.event}</p>
+              <div class="relative group pb-1">
+                <div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900 group-hover:scale-125 transition-transform"></div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="font-mono text-[11px] text-pumpkin-400 font-bold bg-pumpkin-500/15 px-1.5 py-0.5 rounded border border-pumpkin-500/30">${t.time}</span>
+                  <span class="text-[10px] font-bold text-white bg-gothic-800 px-1.5 py-0.5 rounded border border-gray-700">${t.actors}</span>
+                  <span class="text-[10px] text-crimson-400 font-semibold bg-crimson-900/30 px-1.5 py-0.5 rounded border border-crimson-500/30">${t.tag}</span>
+                </div>
+                <p class="text-gray-300 text-xs mt-1 leading-snug pl-0.5">${t.summary || t.event}</p>
               </div>
             `).join('')}
           </div>
@@ -741,7 +788,6 @@ ${char.mission}
       document.getElementById('modal-clue-location').innerText = clue.location;
       document.getElementById('modal-clue-title').innerText = clue.title;
       document.getElementById('modal-clue-desc').innerText = clue.description;
-      document.getElementById('modal-clue-hint').innerText = clue.hint;
 
       document.getElementById('clue-detail-modal').classList.remove('hidden');
     }
@@ -915,13 +961,18 @@ ${GAME_DATA.epilogue.full_truth}
 
     // 60-Minute Countdown Timer
     function toggleTimer() {
+      const timerIcon = document.getElementById('timer-icon');
+      const timerDisplay = document.getElementById('timer-display');
+
       if (isTimerRunning) {
         clearInterval(timerInterval);
         isTimerRunning = false;
-        document.getElementById('timer-display').classList.remove('text-crimson-400');
+        if (timerIcon) timerIcon.innerText = '▶';
+        if (timerDisplay) timerDisplay.classList.remove('text-crimson-400', 'animate-pulse');
       } else {
         isTimerRunning = true;
-        document.getElementById('timer-display').classList.add('text-crimson-400');
+        if (timerIcon) timerIcon.innerText = '⏸';
+        if (timerDisplay) timerDisplay.classList.add('text-crimson-400', 'animate-pulse');
         timerInterval = setInterval(() => {
           if (timerSeconds > 0) {
             timerSeconds--;
@@ -929,6 +980,7 @@ ${GAME_DATA.epilogue.full_truth}
           } else {
             clearInterval(timerInterval);
             isTimerRunning = false;
+            if (timerIcon) timerIcon.innerText = '▶';
             alert('⏰ 60분이 종료되었습니다! 최종 투표를 진행하세요!');
           }
         }, 1000);
