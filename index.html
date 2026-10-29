@@ -204,6 +204,11 @@
         </button>
       </div>
 
+      <!-- Clue Forensic Image Box -->
+      <div id="modal-clue-img-box" class="w-full rounded-xl overflow-hidden border border-gray-700 bg-black/60 shadow-md">
+        <img id="modal-clue-img" src="" alt="수사 증거물 사진" class="w-full h-auto object-cover max-h-56" />
+      </div>
+
       <div class="p-3 bg-gothic-900/80 rounded-xl border border-gray-800 space-y-2">
         <p class="text-xs text-gray-200 leading-relaxed whitespace-pre-line" id="modal-clue-desc"></p>
       </div>
@@ -616,6 +621,14 @@ ${char.secret}
             <span class="text-[10px] text-cyan-500/80 font-mono">SCALE 1:50</span>
           </div>
 
+          <!-- Blueprint Graphic Image -->
+          <div class="relative w-full rounded-xl overflow-hidden border border-cyan-500/50 shadow-inner group">
+            <img src="blueprint.png" alt="루나 하우스 한국어 건축 블루프린트" class="w-full h-auto object-cover hover:scale-[1.01] transition-transform duration-300" />
+            <div class="absolute bottom-1 right-2 text-[9px] text-cyan-300 bg-slate-950/80 px-1.5 py-0.5 rounded border border-cyan-500/40 font-mono">
+              ※ 아래 구역을 누르면 해당 구역의 수사 단서로 직행합니다
+            </div>
+          </div>
+
           <!-- Interactive 2D Blueprint Grid Layout -->
           <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2 shadow-inner">
             <div class="text-[10px] text-cyan-400/70 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
@@ -787,10 +800,10 @@ ${char.secret}
             </h4>
             <div class="grid grid-cols-1 gap-2">
               ${stage1Clues.map(clue => `
-                <div onclick="openClueModal('${clue.id}')" class="card-glass rounded-xl p-3 border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all flex items-center justify-between group">
+                <div onclick="openClueModal('${clue.id}')" class="card-glass rounded-xl p-2.5 border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all flex items-center justify-between group">
                   <div class="flex items-center space-x-3">
-                    <div class="w-9 h-9 rounded-xl bg-gothic-900 border border-pumpkin-500/30 flex items-center justify-center text-pumpkin-400 group-hover:scale-110 transition-transform">
-                      <i class="fa-solid fa-file-lines text-sm"></i>
+                    <div class="w-11 h-11 rounded-lg overflow-hidden border border-pumpkin-500/30 shrink-0 bg-black/60 flex items-center justify-center">
+                      ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<i class="fa-solid fa-file-lines text-sm text-pumpkin-400"></i>`}
                     </div>
                     <div>
                       <span class="text-[9px] font-mono text-pumpkin-400/90">${clue.location}</span>
@@ -827,10 +840,10 @@ ${char.secret}
             ` : `
               <div class="grid grid-cols-1 gap-2">
                 ${stage2Clues.map(clue => `
-                  <div onclick="openClueModal('${clue.id}')" class="card-glass-red rounded-xl p-3 border border-crimson-500/40 hover:border-crimson-500 cursor-pointer transition-all flex items-center justify-between group shadow-md shadow-crimson-900/10">
+                  <div onclick="openClueModal('${clue.id}')" class="card-glass-red rounded-xl p-2.5 border border-crimson-500/40 hover:border-crimson-500 cursor-pointer transition-all flex items-center justify-between group shadow-md shadow-crimson-900/10">
                     <div class="flex items-center space-x-3">
-                      <div class="w-9 h-9 rounded-xl bg-crimson-900/40 border border-crimson-500/50 flex items-center justify-center text-crimson-400 group-hover:scale-110 transition-transform">
-                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                      <div class="w-11 h-11 rounded-lg overflow-hidden border border-crimson-500/40 shrink-0 bg-black/60 flex items-center justify-center">
+                        ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<i class="fa-solid fa-triangle-exclamation text-sm text-crimson-400"></i>`}
                       </div>
                       <div>
                         <span class="text-[9px] font-mono text-crimson-400 font-bold">${clue.location}</span>
@@ -855,6 +868,17 @@ ${char.secret}
       document.getElementById('modal-clue-location').innerText = clue.location;
       document.getElementById('modal-clue-title').innerText = clue.title;
       document.getElementById('modal-clue-desc').innerText = clue.description;
+
+      const imgEl = document.getElementById('modal-clue-img');
+      const imgBox = document.getElementById('modal-clue-img-box');
+      if (imgEl && imgBox) {
+        if (clue.image) {
+          imgEl.src = clue.image;
+          imgBox.classList.remove('hidden');
+        } else {
+          imgBox.classList.add('hidden');
+        }
+      }
 
       document.getElementById('clue-detail-modal').classList.remove('hidden');
     }
