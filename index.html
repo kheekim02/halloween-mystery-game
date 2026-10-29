@@ -115,11 +115,12 @@
     </div>
     <div class="flex items-center space-x-1.5 min-w-max" id="stage-tabs-container">
       <button onclick="changeStage(0)" class="stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs" data-stage="0">0. 사건발생</button>
-      <button onclick="changeStage(1)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="1">1. 참가자&코스튬</button>
-      <button onclick="changeStage(2)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="2">2. 1차 단서수색</button>
-      <button onclick="changeStage(3)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="3">3. 2차 심층수색</button>
-      <button onclick="changeStage(4)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="4">4. 비밀투표</button>
-      <button onclick="changeStage(5)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="5">5. 진범공개</button>
+      <button onclick="changeStage(1)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="1">1. 참가자 소개</button>
+      <button onclick="changeStage(2)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="2">2. 1차 구역수색</button>
+      <button onclick="changeStage(3)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="3">3. 1차 중간투표</button>
+      <button onclick="changeStage(4)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="4">4. 2차 심층수색</button>
+      <button onclick="changeStage(5)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="5">5. 최종투표</button>
+      <button onclick="changeStage(6)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="6">6. 진범공개</button>
     </div>
   </div>
 
@@ -136,20 +137,20 @@
     </button>
     <button onclick="setTab('story')" id="nav-btn-story" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-book-skull text-lg mb-0.5"></i>
-      <span class="text-xs font-bold">사건현장</span>
+      <span class="text-xs font-bold">사건&타임라인</span>
     </button>
     <button onclick="setTab('clues')" id="nav-btn-clues" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200 relative">
-      <i class="fa-solid fa-magnifying-glass text-lg mb-0.5"></i>
-      <span class="text-xs font-bold">단서보관소</span>
+      <i class="fa-solid fa-compass-drafting text-lg mb-0.5"></i>
+      <span class="text-xs font-bold">현장수색</span>
       <span id="clue-badge-count" class="absolute -top-1 -right-2 bg-crimson-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
     </button>
     <button onclick="setTab('players')" id="nav-btn-players" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-masks-theater text-lg mb-0.5"></i>
-      <span class="text-xs font-bold">용의자7인</span>
+      <span class="text-xs font-bold">용의자8인</span>
     </button>
     <button onclick="setTab('vote')" id="nav-btn-vote" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-check-to-slot text-lg mb-0.5"></i>
-      <span class="text-xs font-bold">지목투표</span>
+      <span class="text-xs font-bold">투표/결과</span>
     </button>
   </nav>
 
@@ -167,17 +168,6 @@
       <!-- PLAYER LIST -->
       <div class="space-y-2" id="modal-player-list">
         <!-- Rendered by JS -->
-      </div>
-
-      <!-- COSTUME INPUT -->
-      <div class="pt-2 border-t border-gray-800 space-y-2">
-        <label class="block text-xs font-semibold text-pumpkin-400 flex items-center gap-1.5">
-          <i class="fa-solid fa-wand-magic-sparkles"></i>
-          <span>오늘 입고 온 할로윈 코스튬은?</span>
-        </label>
-        <input type="text" id="input-costume" placeholder="예: 스파이더맨, 해리포터, 삐에로, 공룡잠옷..." 
-               class="w-full bg-gothic-900 border border-gray-700 focus:border-pumpkin-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all">
-        <p class="text-[10px] text-gray-400">입력한 코스튬은 다른 친구들의 프로필과 단서에 실시간 반영됩니다.</p>
       </div>
 
       <div class="flex gap-2 pt-2">
@@ -229,10 +219,15 @@
     let GAME_DATA = null;
     let currentUser = null; // Character ID
     let currentTab = 'role'; // 'role', 'story', 'clues', 'players', 'vote'
-    let currentStage = 0; // 0 to 5
+    let currentStage = 0; // 0 to 6
     let userCostumes = {}; // { char_id: '드라큘라' }
-    let votes = {}; // { voter_id: target_id }
-    let userInvestigations = {}; // { [charId]: ['target1', 'target2'] }
+    let votes = {}; // { voter_id: target_id } -> final votes
+    let midtermVotes = {}; // { voter_id: target_id } -> 1차 중간 투표
+    let isMidtermRevealed = false; // 1차 투표 마감 및 결과 전체 공개 여부
+    let isFinalRevealed = false; // 최종 투표 마감 및 결과 전체 공개 여부
+    let userZoneInvestigations = {}; // { [charId]: 'zone_id' } -> 1차 구역 수색 (1곳)
+    let userInvestigations = {}; // { [charId]: ['target1', 'target2'] } -> 2차 인물 수색 (2명)
+    let userNotes = {}; // { [charId]: { stars: 0, memo: '' } } -> 비공개 개인 수첩
     let timerSeconds = 3600; // 60 minutes
     let timerInterval = null;
     let isTimerRunning = false;
@@ -261,6 +256,22 @@
     }
 
     function loadLocalStorage() {
+      // Clean production reset from test phase (v1.1.0: 8-player expansion)
+      const APP_VERSION = 'v1.1.0-final';
+      if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
+        localStorage.clear();
+        localStorage.setItem('mystery_app_version', APP_VERSION);
+        currentUser = null;
+        currentStage = 0;
+        votes = {};
+        midtermVotes = {};
+        isMidtermRevealed = false;
+        isFinalRevealed = false;
+        userZoneInvestigations = {};
+        userInvestigations = {};
+        userNotes = {};
+        return;
+      }
       const savedUser = localStorage.getItem('mystery_user');
       if (savedUser) currentUser = savedUser;
 
@@ -273,8 +284,23 @@
       const savedVotes = localStorage.getItem('mystery_votes');
       if (savedVotes) votes = JSON.parse(savedVotes);
 
+      const savedMidterm = localStorage.getItem('mystery_midterm_votes');
+      if (savedMidterm) midtermVotes = JSON.parse(savedMidterm);
+
+      const savedMidtermRev = localStorage.getItem('mystery_midterm_revealed');
+      if (savedMidtermRev !== null) isMidtermRevealed = (savedMidtermRev === 'true');
+
+      const savedFinalRev = localStorage.getItem('mystery_final_revealed');
+      if (savedFinalRev !== null) isFinalRevealed = (savedFinalRev === 'true');
+
+      const savedZoneInv = localStorage.getItem('mystery_zone_inv');
+      if (savedZoneInv) userZoneInvestigations = JSON.parse(savedZoneInv);
+
       const savedInv = localStorage.getItem('mystery_investigations');
       if (savedInv) userInvestigations = JSON.parse(savedInv);
+
+      const savedNotes = localStorage.getItem('mystery_user_notes');
+      if (savedNotes) userNotes = JSON.parse(savedNotes);
     }
 
     function saveLocalStorage() {
@@ -282,7 +308,12 @@
       localStorage.setItem('mystery_costumes', JSON.stringify(userCostumes));
       localStorage.setItem('mystery_stage', currentStage.toString());
       localStorage.setItem('mystery_votes', JSON.stringify(votes));
+      localStorage.setItem('mystery_midterm_votes', JSON.stringify(midtermVotes));
+      localStorage.setItem('mystery_midterm_revealed', isMidtermRevealed.toString());
+      localStorage.setItem('mystery_final_revealed', isFinalRevealed.toString());
+      localStorage.setItem('mystery_zone_inv', JSON.stringify(userZoneInvestigations));
       localStorage.setItem('mystery_investigations', JSON.stringify(userInvestigations));
+      localStorage.setItem('mystery_user_notes', JSON.stringify(userNotes));
     }
 
     // Role Selection Modal
@@ -292,7 +323,6 @@
 
       GAME_DATA.characters.forEach(char => {
         const isSelected = currentUser === char.id;
-        const costume = userCostumes[char.id] || '코스튬 미입력';
 
         const btn = document.createElement('div');
         btn.className = `p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
@@ -317,17 +347,13 @@
             </div>
           </div>
           <div class="text-right">
-            <span class="text-[9px] px-2 py-0.5 rounded-full bg-gothic-800 border border-gray-700 text-gray-300">
-              🎭 ${costume}
+            <span class="text-[10px] px-2.5 py-1 rounded-full bg-gothic-800 border border-gray-700 text-pumpkin-400 font-semibold">
+              선택
             </span>
           </div>
         `;
         container.appendChild(btn);
       });
-
-      if (currentUser && userCostumes[currentUser]) {
-        document.getElementById('input-costume').value = userCostumes[currentUser];
-      }
 
       document.getElementById('role-select-modal').classList.remove('hidden');
     }
@@ -342,9 +368,6 @@
       if (selectedEl) {
         selectedEl.className = selectedEl.className.replace('bg-gothic-900/60 border-gray-800 text-gray-300', 'bg-pumpkin-500/20 border-pumpkin-500 text-white');
       }
-      if (userCostumes[charId]) {
-        document.getElementById('input-costume').value = userCostumes[charId];
-      }
     }
 
     function confirmRoleSelection() {
@@ -354,13 +377,6 @@
       }
       if (tempSelectedRole) {
         currentUser = tempSelectedRole;
-      }
-
-      const costumeInput = document.getElementById('input-costume').value.trim();
-      if (costumeInput) {
-        userCostumes[currentUser] = costumeInput;
-      } else if (!userCostumes[currentUser]) {
-        userCostumes[currentUser] = '할로윈 분장';
       }
 
       saveLocalStorage();
@@ -378,10 +394,9 @@
       if (!currentUser || !GAME_DATA) return;
       const char = GAME_DATA.characters.find(c => c.id === currentUser);
       if (char) {
-        const costume = userCostumes[char.id] ? `(${userCostumes[char.id]})` : '';
         document.getElementById('current-user-badge').innerHTML = `
           <span class="text-pumpkin-400 font-bold">${char.real_name}</span> 
-          <span class="text-gray-400">${char.character_name.split(' ')[1] || ''} ${costume}</span>
+          <span class="text-gray-400 font-medium">(${char.role_title})</span>
         `;
       }
       updateClueBadgeCount();
@@ -392,9 +407,12 @@
       if (!GAME_DATA) return;
       let count = 0;
       if (currentStage >= 2) {
-        count += 1; // 공통 단서 (전원 기본 해금)
-        if (currentUser && userInvestigations[currentUser]) {
-          count += userInvestigations[currentUser].length;
+        count += 1; // 공통 부검 단서
+        if (currentUser && userZoneInvestigations[currentUser]) {
+          count += 1; // 1차 구역 수색 단서
+        }
+        if (currentStage >= 4 && currentUser && userInvestigations[currentUser]) {
+          count += userInvestigations[currentUser].length; // 2차 인물 수색 단서
         }
       }
       const badge = document.getElementById('clue-badge-count');
@@ -414,18 +432,25 @@
 
     function changeStage(newStage) {
       currentStage = newStage;
+      if (newStage === 6) {
+        isFinalRevealed = true;
+      }
       saveLocalStorage();
       updateStageTabStyles();
       updateClueBadgeCount();
       
-      // 상단 단계 클릭 시 해당 진행 단계 탭으로 즉시 화면 전환
+      // 상단 단계 클릭 시 해당 탭으로 즉시 화면 전환
       if (newStage === 0) {
         setTab('story');
       } else if (newStage === 1) {
         setTab('players');
-      } else if (newStage === 2 || newStage === 3) {
+      } else if (newStage === 2) {
         setTab('clues');
-      } else if (newStage === 4 || newStage === 5) {
+      } else if (newStage === 3) {
+        setTab('vote');
+      } else if (newStage === 4) {
+        setTab('clues');
+      } else if (newStage === 5 || newStage === 6) {
         setTab('vote');
       } else {
         renderCurrentTab();
@@ -472,9 +497,10 @@
     function renderRoleTab(container) {
       if (!currentUser) return;
       const char = GAME_DATA.characters.find(c => c.id === currentUser);
-      const costume = userCostumes[char.id] || '자유 코스튬';
+      if (!char) return;
 
       const isCulprit = char.is_culprit;
+      const partyOrigin = (GAME_DATA.story && GAME_DATA.story.party_origin) ? GAME_DATA.story.party_origin : null;
 
       const card = document.createElement('div');
       card.className = 'space-y-4';
@@ -501,20 +527,46 @@
           </div>
 
           <div class="bg-gothic-900/80 rounded-xl p-3 border border-gray-800 space-y-1.5 text-xs">
-            <div class="flex items-center justify-between">
-              <span class="text-gray-400">오늘의 코스튬:</span>
-              <span class="text-white font-bold bg-pumpkin-500/20 px-2 py-0.5 rounded border border-pumpkin-500/30">
-                🎭 ${costume}
-              </span>
-            </div>
             <div class="flex items-start justify-between gap-2">
-              <span class="text-gray-400 shrink-0">성격 & 연기 팁:</span>
-              <span class="text-gray-200 text-right font-medium">${char.personality}</span>
+              <span class="text-gray-400 shrink-0 font-medium">성격 & 연기 팁:</span>
+              <span class="text-gray-200 text-right">${char.personality}</span>
             </div>
-            <div class="flex items-start justify-between gap-2">
-              <span class="text-gray-400 shrink-0">피해자와의 관계:</span>
+            <div class="flex items-start justify-between gap-2 border-t border-gray-800/60 pt-1.5">
+              <span class="text-gray-400 shrink-0 font-medium">피해자와의 관계:</span>
               <span class="text-gray-200 text-right">${char.relationship}</span>
             </div>
+          </div>
+        </div>
+
+        <!-- PARTY ORIGIN & MY GATHERING REASON (파티 주최 및 모이게 된 경위) -->
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/40 space-y-3 shadow-lg">
+          <div class="flex items-center space-x-2 text-sm font-bold text-pumpkin-400">
+            <i class="fa-solid fa-champagne-glasses text-base"></i>
+            <span>파티 주최 배경 및 내가 모이게 된 경위</span>
+          </div>
+
+          <!-- 1. 박서준이 파티를 연 이유 (공통) -->
+          ${partyOrigin ? `
+            <div class="p-3 bg-black/60 rounded-xl border border-gray-800 space-y-1 text-xs">
+              <div class="text-pumpkin-400 font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-bullhorn text-[11px]"></i>
+                <span>${partyOrigin.title || '파티 주최 공식 배경'}</span>
+              </div>
+              <p class="text-gray-300 leading-relaxed pl-0.5">
+                ${partyOrigin.host_pretext}
+              </p>
+            </div>
+          ` : ''}
+
+          <!-- 2. 내가 오늘 밤 파티에 온 결정적 이유 (개인별) -->
+          <div class="p-3.5 bg-pumpkin-950/30 rounded-xl border border-pumpkin-500/30 space-y-1.5 text-xs sm:text-sm">
+            <div class="text-pumpkin-300 font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-door-open text-xs"></i>
+              <span>[나: ${char.real_name}] 내가 오늘 밤 파티룸에 오게 된 경위</span>
+            </div>
+            <p class="text-gray-200 leading-relaxed pl-1">
+              ${char.gathering_reason || char.relationship}
+            </p>
           </div>
         </div>
 
@@ -568,133 +620,12 @@ ${char.secret}
               <p class="text-xs text-crimson-400 font-semibold">${victim.role}</p>
             </div>
           </div>
-          <p class="text-xs text-gray-300 leading-relaxed bg-gothic-900/60 p-3 rounded-xl border border-gray-800">
+          <p class="text-xs sm:text-sm text-gray-300 leading-relaxed bg-gothic-900/60 p-3 rounded-xl border border-gray-800">
             ${victim.description}
           </p>
-          <div class="mt-2.5 flex items-center justify-between text-[11px] text-gray-400 px-1">
+          <div class="mt-2.5 flex items-center justify-between text-xs text-gray-400 px-1">
             <span>사망 시각: <strong class="text-white">${story.incident_time}</strong></span>
             <span>사인: <strong class="text-crimson-400">${story.cause_of_death}</strong></span>
-          </div>
-        </div>
-
-        <!-- ARCHITECTURAL BLUEPRINT MAP -->
-        <div class="card-glass rounded-2xl p-4 border border-cyan-500/40 space-y-3 bg-slate-950/90 shadow-xl">
-          <div class="flex items-center justify-between">
-            <h4 class="text-sm font-bold text-cyan-400 flex items-center gap-1.5 font-mono">
-              <i class="fa-solid fa-compass-drafting text-cyan-400"></i>
-              <span>루나 하우스 건축 블루프린트 (구역 터치 시 단서 이동)</span>
-            </h4>
-            <span class="text-xs text-cyan-500 font-mono">SCALE 1:50</span>
-          </div>
-
-          <!-- Interactive 2D Blueprint Grid Layout -->
-          <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2.5 shadow-inner">
-            <div class="text-xs text-cyan-400/80 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
-              <span>LEVEL: 8F PENTHOUSE</span>
-              <span>※ 구역 터치 시 관련 단서 즉시 오픈</span>
-            </div>
-
-            <!-- Top Row: VIP Lounge / Bar / Terrace -->
-            <div class="grid grid-cols-12 gap-2">
-              <!-- VIP Lounge (Crime Scene) -->
-              <div onclick="filterCluesByZone('zone_vip')" class="col-span-5 p-2.5 rounded-xl border-2 border-crimson-500 bg-crimson-950/50 hover:bg-crimson-900/60 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-crimson-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-crimson-300 font-bold bg-crimson-900/90 px-1.5 py-0.5 rounded">A-01</span>
-                  <span class="text-xs text-crimson-400 font-bold animate-pulse">💀 시신</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-crimson-300 transition-colors">VIP 휴게실</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">소파 / 칵테일 잔 / 빨대</div>
-                </div>
-                <div class="text-xs text-crimson-400 font-bold font-mono border-t border-crimson-500/30 pt-1 flex items-center justify-between">
-                  <span>공통 단서</span>
-                  <span>열기 ➔</span>
-                </div>
-              </div>
-
-              <!-- Bar Counter -->
-              <div onclick="filterCluesByZone('zone_bar')" class="col-span-4 p-2.5 rounded-xl border-2 border-amber-500/80 bg-amber-950/40 hover:bg-amber-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-amber-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-amber-300 font-bold bg-amber-900/90 px-1.5 py-0.5 rounded">B-02</span>
-                  <span class="text-xs text-amber-400">🍸</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">바 카운터</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">마녀솥 / 종이빨대</div>
-                </div>
-                <div class="text-xs text-amber-400 font-bold font-mono border-t border-amber-500/30 pt-1 flex items-center justify-between">
-                  <span>현장 구역</span>
-                  <span>이동 ➔</span>
-                </div>
-              </div>
-
-              <!-- Terrace -->
-              <div onclick="filterCluesByZone('zone_terrace')" class="col-span-3 p-2.5 rounded-xl border-2 border-purple-500/80 bg-purple-950/40 hover:bg-purple-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-purple-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-purple-300 font-bold bg-purple-900/90 px-1.5 py-0.5 rounded">C-03</span>
-                  <span class="text-xs text-purple-400">🌙</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">테라스</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">티켓 / 꽁초</div>
-                </div>
-                <div class="text-xs text-purple-400 font-bold font-mono border-t border-purple-500/30 pt-1 flex items-center justify-between">
-                  <span>현장 구역</span>
-                  <span>이동 ➔</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Bottom Row: Restroom / Hallway / Photo Zone -->
-            <div class="grid grid-cols-12 gap-2">
-              <!-- Restroom -->
-              <div onclick="filterCluesByZone('zone_restroom')" class="col-span-3 p-2.5 rounded-xl border-2 border-emerald-500/80 bg-emerald-950/40 hover:bg-emerald-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-emerald-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-emerald-300 font-bold bg-emerald-900/90 px-1.5 py-0.5 rounded">F-06</span>
-                  <span class="text-xs text-emerald-400">🚻</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">화장실</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">세면대 / 알리바이</div>
-                </div>
-                <div class="text-xs text-emerald-400 font-bold font-mono border-t border-emerald-500/30 pt-1 flex items-center justify-between">
-                  <span>현장 구역</span>
-                  <span>이동 ➔</span>
-                </div>
-              </div>
-
-              <!-- Hallway & Entrance -->
-              <div onclick="filterCluesByZone('zone_hallway')" class="col-span-4 p-2.5 rounded-xl border-2 border-cyan-500/80 bg-cyan-950/40 hover:bg-cyan-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-cyan-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-cyan-300 font-bold bg-cyan-900/90 px-1.5 py-0.5 rounded">D-04</span>
-                  <span class="text-xs text-cyan-400">🚪</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">현관 복도</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">와인 흔적 / 중문</div>
-                </div>
-                <div class="text-xs text-cyan-400 font-bold font-mono border-t border-cyan-500/30 pt-1 flex items-center justify-between">
-                  <span>현장 구역</span>
-                  <span>이동 ➔</span>
-                </div>
-              </div>
-
-              <!-- Photo Zone & DJ Console -->
-              <div onclick="filterCluesByZone('zone_photo')" class="col-span-5 p-2.5 rounded-xl border-2 border-blue-500/80 bg-blue-950/40 hover:bg-blue-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-blue-950/50">
-                <div class="flex items-center justify-between">
-                  <span class="text-xs font-mono text-blue-300 font-bold bg-blue-900/90 px-1.5 py-0.5 rounded">E-05</span>
-                  <span class="text-xs text-blue-400">📸</span>
-                </div>
-                <div class="my-2">
-                  <div class="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">포토존 & 콘솔</div>
-                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">삼각대 / 가방 / 스위치</div>
-                </div>
-                <div class="text-xs text-blue-400 font-bold font-mono border-t border-blue-500/30 pt-1 flex items-center justify-between">
-                  <span>현장 구역</span>
-                  <span>이동 ➔</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -726,13 +657,14 @@ ${char.secret}
       container.appendChild(card);
     }
 
-    // 3. CLUES TAB
+    // 3. CLUES TAB (현장 수색 & 단서 보관소)
     function renderCluesTab(container) {
       const card = document.createElement('div');
-      card.className = 'space-y-4';
+      card.className = 'space-y-5';
 
+      const searchedZoneId = (currentUser && userZoneInvestigations[currentUser]) ? userZoneInvestigations[currentUser] : null;
       const myInv = (currentUser && userInvestigations[currentUser]) ? userInvestigations[currentUser] : [];
-      const remainingQuota = Math.max(0, 2 - myInv.length);
+      const remainingSuspectQuota = Math.max(0, 2 - myInv.length);
       const commonClue = GAME_DATA.common_clue || null;
 
       card.innerHTML = `
@@ -740,16 +672,20 @@ ${char.secret}
         <div class="flex items-center justify-between border-b border-gray-800 pb-3">
           <div>
             <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-magnifying-glass text-pumpkin-500"></i>
-              <span>단서 보관소</span>
+              <i class="fa-solid fa-compass-drafting text-pumpkin-500"></i>
+              <span>현장 수색 & 단서 보관소</span>
             </h3>
-            <p class="text-xs sm:text-sm text-gray-400">현장 공통 감식 보고서와 용의자 지목 독점 수사</p>
+            <p class="text-xs sm:text-sm text-gray-400">1차 구역 정밀 수색과 2차 용의자 심층 수색</p>
           </div>
           <div>
             ${currentStage < 2 ? `
-              <span class="bg-gray-800 text-gray-400 px-3 py-1 rounded-full text-xs border border-gray-700">단서 탐색 전</span>
+              <span class="bg-gray-800 text-gray-400 px-3 py-1 rounded-full text-xs border border-gray-700">수색 단계 전</span>
+            ` : currentStage === 2 ? `
+              <span class="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full text-xs border border-cyan-500/40 font-bold">1차 구역 수색 중</span>
+            ` : currentStage === 3 ? `
+              <span class="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full text-xs border border-amber-500/40 font-bold">1차 중간 투표 단계</span>
             ` : `
-              <span class="bg-pumpkin-500/20 text-pumpkin-400 px-3 py-1 rounded-full text-xs border border-pumpkin-500/40 font-bold">수사 진행 중</span>
+              <span class="bg-pumpkin-500/20 text-pumpkin-400 px-3 py-1 rounded-full text-xs border border-pumpkin-500/40 font-bold">2차 심층 수색 중</span>
             `}
           </div>
         </div>
@@ -757,21 +693,21 @@ ${char.secret}
         ${currentStage < 2 ? `
           <div class="card-glass rounded-2xl p-6 text-center space-y-3 border border-gray-800">
             <div class="text-4xl text-gray-600 animate-pulse">🔒</div>
-            <h4 class="text-base font-bold text-gray-200">단서 보관소가 아직 봉인되어 있습니다</h4>
+            <h4 class="text-base font-bold text-gray-200">현장 수색이 아직 봉인되어 있습니다</h4>
             <p class="text-sm text-gray-400 max-w-sm mx-auto leading-relaxed">
-              상단 탭에서 <strong class="text-pumpkin-400">"2. 1차 단서수색"</strong>을 선택하거나 아래 버튼을 누르면 단서 보관소가 즉시 활성화됩니다!
+              상단 탭에서 <strong class="text-pumpkin-400">"2. 1차 구역수색"</strong>을 선택하거나 아래 버튼을 누르면 블루프린트 수색이 활성화됩니다!
             </p>
             <button onclick="changeStage(2)" class="bg-pumpkin-500 hover:bg-pumpkin-400 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-pumpkin-900/30">
-              1차 단서 수색 시작하기
+              1차 구역 수색 시작하기
             </button>
           </div>
         ` : `
-          <!-- SECTION 1: COMMON CLUE (FOR ALL PLAYERS) -->
+          <!-- SECTION 1: COMMON AUTOPSY REPORT (ALL PLAYERS) -->
           <div class="space-y-2.5">
             <div class="flex items-center justify-between">
               <h4 class="text-sm sm:text-base font-bold text-pumpkin-400 uppercase tracking-wide flex items-center gap-1.5">
                 <i class="fa-solid fa-file-waveform"></i>
-                <span>전원 공유 공통 단서 (현장 및 부검)</span>
+                <span>전원 공유 공통 단서 (시신 부검 및 감식)</span>
               </h4>
               <span class="text-xs bg-pumpkin-500/20 text-pumpkin-300 px-2.5 py-0.5 rounded-full border border-pumpkin-500/30 font-semibold">전원 열람 가능</span>
             </div>
@@ -788,7 +724,7 @@ ${char.secret}
                       ${commonClue.title}
                     </h5>
                     <p class="text-xs sm:text-sm text-gray-300 line-clamp-2 leading-relaxed">
-                      ${commonClue.description.split('\n')[0]}
+                      ${commonClue.summary || commonClue.description.split('\n')[0]}
                     </p>
                   </div>
                   <div class="flex flex-col items-end justify-between self-stretch shrink-0">
@@ -802,51 +738,143 @@ ${char.secret}
             ` : ''}
           </div>
 
-          <!-- SECTION 2: 2-TARGET EXCLUSIVE INVESTIGATION -->
+          <!-- SECTION 2: PHASE 1 BLUEPRINT ZONE INVESTIGATION (1 ZONE SEARCH PER PLAYER) -->
           <div class="space-y-3 pt-2">
             <div class="flex items-center justify-between flex-wrap gap-2">
               <div class="flex items-center gap-2">
                 <h4 class="text-sm sm:text-base font-bold text-cyan-400 uppercase tracking-wide flex items-center gap-1.5">
-                  <i class="fa-solid fa-user-secret"></i>
-                  <span>용의자 2인 지목 독점 수사</span>
+                  <i class="fa-solid fa-compass-drafting"></i>
+                  <span>1차 현장 구역 정밀 수색 (블루프린트)</span>
                 </h4>
               </div>
-              <div class="flex items-center gap-1.5">
-                <span class="text-xs font-mono font-bold ${remainingQuota > 0 ? 'text-amber-300 bg-amber-950/80 border-amber-500/50' : 'text-emerald-300 bg-emerald-950/80 border-emerald-500/50'} px-2.5 py-1 rounded-lg border">
-                  남은 수사 기회: ${remainingQuota} / 2 회
+              <div>
+                <span class="text-xs font-mono font-bold ${searchedZoneId ? 'text-emerald-300 bg-emerald-950/80 border-emerald-500/50' : 'text-amber-300 bg-amber-950/80 border-amber-500/50'} px-2.5 py-1 rounded-lg border">
+                  ${searchedZoneId ? '1곳 수색 완료 (기회 소진)' : '남은 수색 기회: 1곳'}
                 </span>
               </div>
             </div>
 
-            <!-- Investigation Description Box -->
-            <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-gray-800 text-xs sm:text-sm text-gray-300 space-y-1.5 shadow-inner">
+            <!-- Rules Box -->
+            <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-gray-800 text-xs sm:text-sm text-gray-300 space-y-1 shadow-inner">
               <p class="text-white font-semibold flex items-center gap-1">
                 <i class="fa-solid fa-circle-info text-cyan-400"></i>
-                <span>독점 수사 규칙</span>
+                <span>1차 구역 수색 규칙</span>
               </p>
               <p class="text-gray-300 leading-relaxed text-xs sm:text-sm">
-                의심스러운 친구 <strong class="text-white">최대 2명</strong>을 지목하면, 그 사람의 은밀한 소지품과 행적 단서를 독점 확보할 수 있습니다. 획득한 단서는 오직 당신에게만 공개되므로, 친구들과 대화와 심리전을 통해 정보를 교환하세요!
+                아래 8개 구역 중 가장 의심스러운 <strong class="text-white">1개 구역</strong>을 터치해 정밀 수색을 진행하세요. (공간 환경 단서 1건 획득). 획득한 단서는 친구들과 대화로 공유해야 합니다!
               </p>
             </div>
 
-            ${!currentUser ? `
-              <div class="card-glass rounded-xl p-4 text-center space-y-2 border border-amber-500/40">
-                <p class="text-sm font-bold text-amber-400">⚠️ 먼저 본인의 역할을 선택해주세요</p>
-                <p class="text-xs text-gray-400">내 역할을 지정해야 다른 용의자 6명을 지목하여 수사할 수 있습니다.</p>
-                <button onclick="openSelectRoleModal()" class="bg-amber-500 hover:bg-amber-400 text-black font-bold px-4 py-2 rounded-lg text-xs mt-1 transition-all">
-                  내 역할 선택하기
+            <!-- Interactive 2D Blueprint Grid -->
+            <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2.5 shadow-inner">
+              <div class="text-xs text-cyan-400/80 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
+                <span>LEVEL: 8F PENTHOUSE (8 ZONES)</span>
+                <span>※ 구역 터치 시 정밀 수색 진행</span>
+              </div>
+
+              <!-- Top Row: VIP Lounge / Bar / Terrace / Smoking Area -->
+              <div class="grid grid-cols-12 gap-2">
+                <!-- VIP Lounge (A-01) -->
+                ${renderZoneBox('zone_vip', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Bar Counter (B-02) -->
+                ${renderZoneBox('zone_bar', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Terrace (C-03) -->
+                ${renderZoneBox('zone_terrace', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Smoking Area (H-08) -->
+                ${renderZoneBox('zone_smoking', 'col-span-6 sm:col-span-3', searchedZoneId)}
+              </div>
+
+              <!-- Bottom Row: Hallway / Photo Zone / Restroom / Locker -->
+              <div class="grid grid-cols-12 gap-2">
+                <!-- Hallway (D-04) -->
+                ${renderZoneBox('zone_hallway', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Photo Zone (E-05) -->
+                ${renderZoneBox('zone_photo', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Restroom (F-06) -->
+                ${renderZoneBox('zone_restroom', 'col-span-6 sm:col-span-3', searchedZoneId)}
+
+                <!-- Locker Room (G-07) -->
+                ${renderZoneBox('zone_locker', 'col-span-6 sm:col-span-3', searchedZoneId)}
+              </div>
+            </div>
+
+            ${searchedZoneId && GAME_DATA.zone_clues && GAME_DATA.zone_clues[searchedZoneId] ? `
+              <!-- UNLOCKED ZONE CARD -->
+              <div class="card-glass rounded-xl p-3.5 border-2 border-cyan-500/60 bg-cyan-950/20 shadow-md space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-mono font-bold text-cyan-300 bg-cyan-900/90 px-2 py-0.5 rounded border border-cyan-500/50">
+                      <i class="fa-solid fa-unlock mr-1"></i>1차 수색 완료
+                    </span>
+                    <span class="text-sm font-bold text-white">${GAME_DATA.zone_clues[searchedZoneId].zone_name}</span>
+                  </div>
+                  <span class="text-xs text-cyan-300 font-mono">단서 확보됨</span>
+                </div>
+                <div class="bg-black/60 p-2.5 rounded-lg border border-gray-800">
+                  <div class="text-xs font-mono text-cyan-400 font-semibold mb-0.5">${GAME_DATA.zone_clues[searchedZoneId].location}</div>
+                  <div class="text-sm font-bold text-gray-100">${GAME_DATA.zone_clues[searchedZoneId].title}</div>
+                </div>
+                <button onclick="openZoneClueModal('${searchedZoneId}')" class="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-2.5 rounded-lg text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow">
+                  <i class="fa-solid fa-file-lines"></i>
+                  <span>구역 환경 단서 상세 보고서 보기</span>
+                </button>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- SECTION 3: PHASE 2 SUSPECT INVESTIGATION (UNLOCKED AT STAGE >= 4) -->
+          <div class="space-y-3 pt-4 border-t border-gray-800">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm sm:text-base font-bold text-pumpkin-400 uppercase tracking-wide flex items-center gap-1.5">
+                  <i class="fa-solid fa-user-secret"></i>
+                  <span>2차 용의자 2인 지목 독점 수사</span>
+                </h4>
+              </div>
+              ${currentStage >= 4 ? `
+                <div>
+                  <span class="text-xs font-mono font-bold ${remainingSuspectQuota > 0 ? 'text-amber-300 bg-amber-950/80 border-amber-500/50' : 'text-emerald-300 bg-emerald-950/80 border-emerald-500/50'} px-2.5 py-1 rounded-lg border">
+                    남은 수사 기회: ${remainingSuspectQuota} / 2 회
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+
+            ${currentStage < 4 ? `
+              <!-- LOCKED PHASE 2 BANNER -->
+              <div class="card-glass rounded-xl p-5 text-center space-y-3 border border-gray-800">
+                <div class="text-3xl text-gray-500">🔒</div>
+                <h5 class="text-sm sm:text-base font-bold text-gray-300">2차 용의자 심층 수색 봉인 중</h5>
+                <p class="text-xs sm:text-sm text-gray-400 max-w-sm mx-auto leading-relaxed">
+                  1차 구역 수색 후 상단 탭의 <strong class="text-amber-400">"3. 1차 중간투표"</strong>를 마치고 4단계로 진입하면 의심스러운 용의자 2명의 개인 소지품 단서가 해금됩니다.
+                </p>
+                <button onclick="changeStage(3)" class="bg-amber-600 hover:bg-amber-500 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm transition-all shadow">
+                  1차 중간 투표하러 가기 ➔
                 </button>
               </div>
             ` : `
-              <!-- SUSPECT CARDS GRID -->
+              <!-- UNLOCKED PHASE 2 SUSPECT CARDS -->
+              <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-gray-800 text-xs sm:text-sm text-gray-300 space-y-1 shadow-inner">
+                <p class="text-white font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-circle-info text-pumpkin-400"></i>
+                  <span>2차 심층 수사 규칙</span>
+                </p>
+                <p class="text-gray-300 leading-relaxed text-xs sm:text-sm">
+                  1차 투표 결과를 바탕으로 가장 의심스러운 친구 <strong class="text-white">최대 2명</strong>을 지목해 비밀 소지품과 행적을 독점 수사하세요!
+                </p>
+              </div>
+
               <div class="grid grid-cols-1 gap-3">
                 ${GAME_DATA.characters.filter(c => c.id !== currentUser).map(suspect => {
                   const isInvestigated = myInv.includes(suspect.id);
                   const targetClue = GAME_DATA.target_clues ? GAME_DATA.target_clues[suspect.id] : null;
-                  const costume = userCostumes[suspect.id] ? `(${userCostumes[suspect.id]})` : '';
 
                   if (isInvestigated && targetClue) {
-                    // UNLOCKED CARD
                     return `
                       <div class="card-glass rounded-xl p-3.5 border-2 border-emerald-500/60 bg-emerald-950/20 shadow-md space-y-2.5">
                         <div class="flex items-center justify-between">
@@ -854,7 +882,7 @@ ${char.secret}
                             <span class="text-xs font-mono font-bold text-emerald-300 bg-emerald-900/90 px-2 py-0.5 rounded border border-emerald-500/50">
                               <i class="fa-solid fa-lock-open mr-1"></i>수사 완료
                             </span>
-                            <span class="text-sm sm:text-base font-bold text-white">${suspect.real_name} <span class="text-xs text-gray-300 font-normal">${suspect.character_name} ${costume}</span></span>
+                            <span class="text-sm sm:text-base font-bold text-white">${suspect.real_name} <span class="text-xs text-gray-300 font-normal">${suspect.character_name}</span></span>
                           </div>
                           <span class="text-xs text-emerald-300 font-mono">독점 열람 가능</span>
                         </div>
@@ -869,8 +897,7 @@ ${char.secret}
                       </div>
                     `;
                   } else {
-                    // LOCKED CARD
-                    const canInvestigate = remainingQuota > 0;
+                    const canInvestigate = remainingSuspectQuota > 0;
                     return `
                       <div class="card-glass rounded-xl p-3.5 border border-gray-800 hover:border-gray-700 transition-all space-y-2.5">
                         <div class="flex items-center justify-between">
@@ -878,7 +905,7 @@ ${char.secret}
                             <span class="text-xs font-mono text-gray-400 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
                               <i class="fa-solid fa-lock mr-1"></i>비공개
                             </span>
-                            <span class="text-sm sm:text-base font-bold text-gray-200">${suspect.real_name} <span class="text-xs text-gray-400 font-normal">${suspect.character_name} ${costume}</span></span>
+                            <span class="text-sm sm:text-base font-bold text-gray-200">${suspect.real_name} <span class="text-xs text-gray-400 font-normal">${suspect.character_name}</span></span>
                           </div>
                           <span class="text-xs text-gray-400 font-mono">${suspect.role_title}</span>
                         </div>
@@ -887,7 +914,7 @@ ${char.secret}
                           <span class="text-gray-400 font-mono">🔒 잠김</span>
                         </div>
                         ${canInvestigate ? `
-                          <button onclick="investigateSuspect('${suspect.id}')" class="w-full bg-cyan-700 hover:bg-cyan-600 text-white font-bold py-2.5 rounded-lg text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow">
+                          <button onclick="investigateSuspect('${suspect.id}')" class="w-full bg-pumpkin-600 hover:bg-pumpkin-500 text-white font-bold py-2.5 rounded-lg text-xs sm:text-sm transition-all flex items-center justify-center gap-2 shadow">
                             <i class="fa-solid fa-magnifying-glass"></i>
                             <span>이 사람 수사하기 (기회 1회 소진)</span>
                           </button>
@@ -901,18 +928,91 @@ ${char.secret}
                   }
                 }).join('')}
               </div>
-
-              <!-- RESET BUTTON (FOR TESTING) -->
-              <div class="text-center pt-2">
-                <button onclick="resetInvestigations()" class="text-xs text-gray-400 hover:text-gray-200 underline font-mono">
-                  [테스트용] 나의 수사 지목 내역 초기화
-                </button>
-              </div>
             `}
           </div>
         `}
       `;
       container.appendChild(card);
+    }
+
+    function renderZoneBox(zoneId, colSpan, searchedZoneId) {
+      const zone = GAME_DATA.floor_plan.zones.find(z => z.id === zoneId);
+      if (!zone) return '';
+      const isSearchedByMe = searchedZoneId === zoneId;
+      const isQuotaUsed = !!searchedZoneId;
+
+      let borderStyle = 'border-cyan-500/60 bg-cyan-950/40 hover:bg-cyan-900/50';
+      let statusTag = '<span class="text-cyan-300">수색 가능</span><span class="text-cyan-400">터치 ➔</span>';
+
+      if (isSearchedByMe) {
+        borderStyle = 'border-2 border-emerald-500 bg-emerald-950/60 shadow-lg shadow-emerald-950/60';
+        statusTag = '<span class="text-emerald-300 font-bold">수색 완료</span><span class="text-emerald-300 font-bold">열람 ➔</span>';
+      } else if (isQuotaUsed) {
+        borderStyle = 'border-gray-800 bg-gray-900/40 opacity-60';
+        statusTag = '<span class="text-gray-500">미수색</span><span class="text-gray-500">🔒</span>';
+      }
+
+      const icon = zone.code === 'A-01' ? '💀' : zone.code === 'B-02' ? '🍸' : zone.code === 'C-03' ? '🌙' : zone.code === 'D-04' ? '🚪' : zone.code === 'E-05' ? '📸' : '🚻';
+
+      return `
+        <div onclick="clickZoneBox('${zoneId}')" class="${colSpan} p-2.5 rounded-xl border-2 ${borderStyle} cursor-pointer transition-all flex flex-col justify-between group shadow-md">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold ${isSearchedByMe ? 'text-emerald-300 bg-emerald-900/90' : 'text-cyan-300 bg-cyan-900/90'} px-1.5 py-0.5 rounded">${zone.code}</span>
+            <span class="text-xs">${icon}</span>
+          </div>
+          <div class="my-2">
+            <div class="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">${zone.name}</div>
+            <div class="text-xs text-gray-300 mt-0.5 leading-snug">${zone.label}</div>
+          </div>
+          <div class="text-xs font-mono border-t border-cyan-500/30 pt-1 flex items-center justify-between">
+            ${statusTag}
+          </div>
+        </div>
+      `;
+    }
+
+    function clickZoneBox(zoneId) {
+      if (!currentUser) {
+        showToast('⚠️ 먼저 본인의 역할을 선택해주세요.');
+        setTab('role');
+        return;
+      }
+      const mySearched = userZoneInvestigations[currentUser];
+      if (mySearched === zoneId) {
+        openZoneClueModal(zoneId);
+        return;
+      }
+      if (mySearched) {
+        showToast('⚠️ 이미 1곳의 구역을 수색하셨습니다! 다른 방의 단서는 친구들과 대화로 알아내세요.');
+        return;
+      }
+      selectZoneInvestigation(zoneId);
+    }
+
+    function selectZoneInvestigation(zoneId) {
+      const zone = GAME_DATA.floor_plan.zones.find(z => z.id === zoneId);
+      const zoneName = zone ? zone.name : '해당 구역';
+
+      if (confirm(`[${zoneName}]을(를) 1차 현장 정밀 수색 구역으로 선택하시겠습니까?\n\n(1인당 1곳만 수색할 수 있으며, 선택 즉시 해당 구역의 환경 단서가 영구 해금됩니다)`)) {
+        userZoneInvestigations[currentUser] = zoneId;
+        saveLocalStorage();
+        updateClueBadgeCount();
+        renderCurrentTab();
+        showToast(`🔍 [${zoneName}] 수색 완료! 단서를 확인하세요.`);
+        setTimeout(() => {
+          openZoneClueModal(zoneId);
+        }, 200);
+      }
+    }
+
+    function openZoneClueModal(zoneId) {
+      if (!GAME_DATA || !GAME_DATA.zone_clues || !GAME_DATA.zone_clues[zoneId]) return;
+      const clue = GAME_DATA.zone_clues[zoneId];
+      document.getElementById('modal-clue-badge').innerText = clue.badge || '1차 현장 구역 단서';
+      document.getElementById('modal-clue-location').innerText = `${clue.zone_name} | ${clue.location}`;
+      document.getElementById('modal-clue-title').innerText = clue.title;
+      document.getElementById('modal-clue-desc').innerText = clue.description;
+      document.getElementById('clue-detail-modal').classList.remove('hidden');
     }
 
     function openCommonClueModal() {
@@ -968,20 +1068,13 @@ ${char.secret}
       }
     }
 
-    function resetInvestigations() {
-      if (!currentUser) return;
-      if (confirm('수사 지목 내역을 초기화하시겠습니까? (테스트용)')) {
-        userInvestigations[currentUser] = [];
-        saveLocalStorage();
-        updateClueBadgeCount();
-        renderCurrentTab();
-        showToast('수사 지목 내역이 초기화되었습니다.');
-      }
-    }
-
     function openClueModal(clueId) {
       if (clueId === 'common' || clueId === 'common_clue') {
         openCommonClueModal();
+        return;
+      }
+      if (GAME_DATA && GAME_DATA.zone_clues && GAME_DATA.zone_clues[clueId]) {
+        openZoneClueModal(clueId);
         return;
       }
       if (GAME_DATA && GAME_DATA.target_clues && GAME_DATA.target_clues[clueId]) {
@@ -1005,22 +1098,22 @@ ${char.secret}
           <div>
             <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
               <i class="fa-solid fa-masks-theater text-pumpkin-500"></i>
-              <span>용의자 7인 프로필 & 코스튬</span>
+              <span>용의자 8인 프로필 & 모임 경위</span>
             </h3>
-            <p class="text-[10px] text-gray-400">서로의 표정과 알리바이를 관찰하세요.</p>
+            <p class="text-[10px] text-gray-400">서로의 표정과 파티 참석 경위, 알리바이를 관찰하세요.</p>
           </div>
-          <button onclick="openSelectRoleModal()" class="text-[10px] text-pumpkin-400 border border-pumpkin-500/30 px-2 py-0.5 rounded-full hover:bg-pumpkin-500/10">
-            코스튬 수정
+          <button onclick="openSelectRoleModal()" class="text-[10px] text-pumpkin-400 border border-pumpkin-500/30 px-2.5 py-1 rounded-full hover:bg-pumpkin-500/10 transition-all font-semibold">
+            내 역할 변경
           </button>
         </div>
 
         <div class="space-y-2.5">
           ${GAME_DATA.characters.map(char => {
             const isMe = char.id === currentUser;
-            const costume = userCostumes[char.id] || '코스튬 미입력';
+            const noteData = userNotes[char.id] || { stars: 0, memo: '' };
 
             return `
-              <div class="card-glass rounded-2xl p-3.5 border ${isMe ? 'border-pumpkin-500 shadow-md shadow-pumpkin-500/10' : 'border-gray-800'} space-y-2">
+              <div class="card-glass rounded-2xl p-3.5 border ${isMe ? 'border-pumpkin-500 shadow-md shadow-pumpkin-500/10' : 'border-gray-800'} space-y-2.5">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center space-x-2.5">
                     <div class="w-9 h-9 rounded-xl ${isMe ? 'bg-pumpkin-500 text-white' : 'bg-gothic-900 border border-gray-700 text-gray-300'} flex items-center justify-center text-xs font-bold">
@@ -1036,15 +1129,54 @@ ${char.secret}
                     </div>
                   </div>
 
-                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gothic-900 border border-pumpkin-500/30 text-pumpkin-300 shadow-inner">
-                    🎭 ${costume}
+                  <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-gothic-900 border border-pumpkin-500/30 text-pumpkin-300 font-mono">
+                    ${char.role_title}
                   </span>
                 </div>
 
-                <div class="text-[11px] text-gray-300 bg-gothic-900/60 p-2.5 rounded-xl border border-gray-800/80 space-y-1">
-                  <div><strong class="text-gray-400">공개 신분:</strong> ${char.public_info}</div>
+                <div class="text-[11px] text-gray-300 bg-gothic-900/60 p-2.5 rounded-xl border border-gray-800/80 space-y-1.5">
+                  <div><strong class="text-pumpkin-400">파티 참석 경위:</strong> ${char.gathering_reason || char.relationship}</div>
                   <div><strong class="text-gray-400">공개 알리바이:</strong> "${char.alibi}"</div>
                 </div>
+
+                ${!isMe ? `
+                  <!-- PRIVATE SUSPECT NOTEBOOK (나만의 비밀 추리 수첩) -->
+                  <div class="bg-black/60 p-2.5 rounded-xl border border-gray-800/90 space-y-2">
+                    <div class="flex items-center justify-between text-[11px]">
+                      <span class="font-bold text-gray-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-user-secret text-amber-400 text-xs"></i>
+                        <span>내 비밀 의심도</span>
+                      </span>
+                      <div class="flex items-center gap-0.5">
+                        ${[1, 2, 3, 4, 5].map(starNum => `
+                          <button type="button" onclick="setSuspectStars('${char.id}', ${starNum})" class="text-sm p-0.5 transition-transform active:scale-125 focus:outline-none ${starNum <= noteData.stars ? 'text-amber-400' : 'text-gray-600 hover:text-gray-400'}" title="${starNum}점 의심">
+                            ★
+                          </button>
+                        `).join('')}
+                        ${noteData.stars > 0 ? `
+                          <button type="button" onclick="setSuspectStars('${char.id}', 0)" class="text-[9px] text-gray-500 hover:text-gray-300 ml-1 font-mono" title="별점 취소">
+                            ✕
+                          </button>
+                        ` : ''}
+                      </div>
+                    </div>
+
+                    <div class="space-y-1">
+                      <textarea 
+                        oninput="updateSuspectMemo('${char.id}', this.value)" 
+                        placeholder="이 용의자에 대한 비밀 메모 (수상한 표정, 모순된 알리바이, 귓속말 내용 등)..." 
+                        rows="2" 
+                        class="w-full bg-gothic-900/90 border border-gray-800 focus:border-amber-500/60 rounded-lg p-2 text-[11px] text-gray-200 placeholder-gray-500 focus:outline-none transition-all resize-none">${noteData.memo || ''}</textarea>
+                      <div class="flex items-center justify-between text-[9px] text-gray-500 px-0.5">
+                        <span class="flex items-center gap-1">
+                          <i class="fa-solid fa-lock text-[8px] text-emerald-500"></i>
+                          <span>내 스마트폰에만 저장되는 비공개 수첩</span>
+                        </span>
+                        <span id="memo-saved-indicator-${char.id}" class="text-emerald-400/90 font-mono hidden">저장됨 ✓</span>
+                      </div>
+                    </div>
+                  </div>
+                ` : ''}
               </div>
             `;
           }).join('')}
@@ -1058,26 +1190,322 @@ ${char.secret}
       const card = document.createElement('div');
       card.className = 'space-y-4';
 
-      const myVote = votes[currentUser] || null;
+      if (currentStage < 3) {
+        card.innerHTML = `
+          <div class="card-glass rounded-2xl p-6 text-center space-y-3 border border-gray-800">
+            <div class="text-4xl text-gray-600 animate-pulse">🗳️</div>
+            <h4 class="text-base font-bold text-gray-200">아직 투표 단계가 아닙니다</h4>
+            <p class="text-sm text-gray-400 max-w-sm mx-auto leading-relaxed">
+              1차 구역 수색을 먼저 완료하고 친구들과 대화를 나눈 뒤, 상단에서 <strong class="text-amber-400">"3. 1차 중간투표"</strong> 단계를 진행하세요!
+            </p>
+            <button onclick="changeStage(2)" class="bg-cyan-700 hover:bg-cyan-600 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all shadow">
+              1차 구역 수색하러 가기 ➔
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+        return;
+      }
+
+      if (currentStage === 3 || currentStage === 4) {
+        // 1차 중간 의심자 투표 화면
+        const totalParticipants = GAME_DATA.characters.length;
+        const myMidtermVote = midtermVotes[currentUser] || null;
+        const totalMidtermVotes = Object.keys(midtermVotes).length;
+        const isMidtermFinished = isMidtermRevealed || (totalMidtermVotes >= totalParticipants);
+
+        // Calculate counts
+        const voteCounts = {};
+        GAME_DATA.characters.forEach(c => { voteCounts[c.id] = 0; });
+        Object.values(midtermVotes).forEach(targetId => {
+          if (voteCounts[targetId] !== undefined) voteCounts[targetId]++;
+        });
+
+        // Sorted candidates by votes (for revealed view)
+        const sortedCandidates = [...GAME_DATA.characters].sort((a, b) => {
+          return (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0);
+        });
+
+        card.innerHTML = `
+          <!-- HEADER & VOTE PROGRESS (진행수만 공개) -->
+          <div class="card-glass rounded-2xl p-4 border border-amber-500/40 text-center space-y-3">
+            <div class="text-3xl text-amber-500 animate-pulse">🗳️</div>
+            <div>
+              <h3 class="text-base font-bold text-white">1차 중간 의심자 지목 투표</h3>
+              <p class="text-xs sm:text-sm text-gray-300 mt-1">
+                1차 구역 수색과 알리바이를 바탕으로, <strong class="text-amber-400">현재 가장 의심스러운 1명</strong>을 비밀리에 지목하세요.
+              </p>
+            </div>
+
+            <!-- PROGRESS BOX (투표 진행수만 공개) -->
+            <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-amber-400 font-bold flex items-center gap-1.5">
+                  <i class="fa-solid fa-users-viewfinder"></i>
+                  <span>중간 투표 진행 현황</span>
+                </span>
+                <span class="font-mono font-bold text-white text-sm">
+                  ${totalMidtermVotes} / ${totalParticipants}명 완료
+                </span>
+              </div>
+              <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                <div class="bg-gradient-to-r from-amber-600 to-pumpkin-500 h-full rounded-full transition-all duration-500" 
+                     style="width: ${Math.round((totalMidtermVotes / totalParticipants) * 100)}%"></div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-gray-400">
+                <span>${myMidtermVote ? '✓ 나의 투표 완료 (비밀 유지 중)' : '⏳ 아직 투표하지 않음'}</span>
+                <span>전원 완료 시 결과 공개</span>
+              </div>
+            </div>
+
+            <!-- REVEAL / CLOSE BUTTON -->
+            <div class="pt-1 flex items-center justify-center gap-2">
+              ${!isMidtermFinished ? `
+                <button onclick="toggleMidtermReveal(true)" class="text-xs text-amber-400/90 hover:text-amber-300 underline font-mono">
+                  [진행/호스트] 투표 마감하고 결과 전체 공개하기 ➔
+                </button>
+              ` : `
+                <button onclick="toggleMidtermReveal(false)" class="text-xs text-gray-400 hover:text-gray-200 underline font-mono">
+                  [재투표 진행을 위해 결과 다시 숨기기]
+                </button>
+              `}
+            </div>
+          </div>
+
+          <!-- FULL RESULTS: SHOWN ONLY AFTER VOTING IS FINISHED -->
+          ${isMidtermFinished ? `
+            <div class="card-glass rounded-2xl p-4 border border-amber-500/60 space-y-3 bg-amber-950/20 shadow-xl animate-fade-in">
+              <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                <span class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                  <i class="fa-solid fa-chart-column"></i>
+                  <span>1차 중간 투표 최종 집계 결과 (전체 공개)</span>
+                </span>
+                <span class="text-xs text-amber-300 font-mono font-bold bg-amber-900/80 px-2 py-0.5 rounded border border-amber-500/40">
+                  총 ${totalMidtermVotes}명 투표 완료
+                </span>
+              </div>
+
+              <!-- Top Suspect Announcement -->
+              ${sortedCandidates[0] && (voteCounts[sortedCandidates[0].id] > 0) ? `
+                <div class="p-2.5 bg-black/60 rounded-xl border border-amber-500/30 flex items-center justify-between text-xs sm:text-sm">
+                  <span class="text-gray-300 font-semibold">🔥 1차 최다 의심 용의자:</span>
+                  <span class="text-amber-400 font-bold font-mono">
+                    ${sortedCandidates[0].real_name} (${voteCounts[sortedCandidates[0].id]}표)
+                  </span>
+                </div>
+              ` : ''}
+
+              <!-- Candidate Bar Chart -->
+              <div class="space-y-2.5">
+                ${sortedCandidates.map((char, idx) => {
+                  const count = voteCounts[char.id] || 0;
+                  const pct = totalMidtermVotes > 0 ? Math.round((count / totalMidtermVotes) * 100) : 0;
+                  const isTop = idx === 0 && count > 0;
+                  return `
+                    <div class="space-y-1">
+                      <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold ${isTop ? 'text-amber-400 font-extrabold' : 'text-white'} flex items-center gap-1">
+                          ${isTop ? '🔥 ' : ''}${char.real_name} (${char.character_name})
+                        </span>
+                        <span class="text-amber-400 font-mono font-bold">${count}표 (${pct}%)</span>
+                      </div>
+                      <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                        <div class="${isTop ? 'bg-amber-400' : 'bg-amber-600'} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+
+              <!-- Next Phase Button -->
+              <div class="pt-2 text-center space-y-2 border-t border-gray-800/80">
+                <p class="text-xs text-gray-300">중간 투표 결과를 확인했으니 이제 2차 심층 수색에서 의심자를 집중 파헤치세요!</p>
+                <button onclick="changeStage(4)" class="w-full bg-gradient-to-r from-pumpkin-600 to-amber-600 hover:from-pumpkin-500 hover:to-amber-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg">
+                  4. 2차 심층 수색 단계로 이동 (용의자 2인 지목) ➔
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- CANDIDATE LIST -->
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-gray-400 uppercase tracking-wide px-1 flex items-center justify-between">
+              <span>용의자 지목 선택 ${isMidtermFinished ? '(투표 마감됨 / 변경 가능)' : '(비밀 투표)'}</span>
+              ${myMidtermVote ? '<span class="text-amber-400 text-[11px]">✓ 지목 완료됨</span>' : ''}
+            </div>
+            ${GAME_DATA.characters.map(char => {
+              const isMe = char.id === currentUser;
+              const isSelected = myMidtermVote === char.id;
+
+              return `
+                <div onclick="submitMidtermVote('${char.id}')" 
+                     class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between ${
+                       isSelected 
+                         ? 'border-amber-500 bg-amber-950/40 shadow-md shadow-amber-600/20' 
+                         : 'border-gray-800 hover:border-gray-700'
+                     }">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg ${isSelected ? 'bg-amber-600 text-white font-bold' : 'bg-gothic-900 text-gray-400'} flex items-center justify-center text-xs font-bold">
+                      ${isSelected ? '✓' : char.real_name.charAt(0)}
+                    </div>
+                    <div>
+                      <div class="text-sm font-bold text-white flex items-center gap-1.5">
+                        <span>${char.real_name}</span>
+                        ${isMe ? '<span class="text-xs text-gray-400">(나)</span>' : ''}
+                      </div>
+                      <p class="text-xs text-amber-400/90">${char.character_name} · ${char.role_title}</p>
+                    </div>
+                  </div>
+                  <div>
+                    ${isSelected ? `
+                      <span class="text-xs font-bold text-amber-400 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-500/40">
+                        내가 지목함
+                      </span>
+                    ` : `
+                      <span class="text-xs text-gray-400 hover:text-white">지목하기</span>
+                    `}
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+        container.appendChild(card);
+        return;
+      }
+
+      // STAGE 5 or 6: FINAL VOTE & EPILOGUE
+      const totalParticipants = GAME_DATA.characters.length;
+      const myFinalVote = votes[currentUser] || null;
+      const totalFinalVotes = Object.keys(votes).length;
+      const isFinalFinished = currentStage >= 6 || isFinalRevealed || (totalFinalVotes >= totalParticipants);
+
+      // Calculate final vote counts
+      const finalVoteCounts = {};
+      GAME_DATA.characters.forEach(c => { finalVoteCounts[c.id] = 0; });
+      Object.values(votes).forEach(targetId => {
+        if (finalVoteCounts[targetId] !== undefined) finalVoteCounts[targetId]++;
+      });
+
+      const sortedFinalCandidates = [...GAME_DATA.characters].sort((a, b) => {
+        return (finalVoteCounts[b.id] || 0) - (finalVoteCounts[a.id] || 0);
+      });
+
+      // AWARDS CALCULATION (Stage 6)
+      const culpritVotes = finalVoteCounts['char_jiyoung'] || 0;
+      const sherlockVoters = Object.entries(votes)
+        .filter(([voterId, targetId]) => targetId === 'char_jiyoung')
+        .map(([voterId]) => {
+          const c = GAME_DATA.characters.find(char => char.id === voterId);
+          return c ? `${c.real_name}` : voterId;
+        });
+
+      let oscarWinner = '';
+      let oscarReason = '';
+      if (culpritVotes <= 2) {
+        oscarWinner = '문지영 (신데렐라)';
+        oscarReason = `단 ${culpritVotes}표만 받으며 모두의 눈을 완벽하게 속이고 탈출에 성공한 세기의 블러퍼!`;
+      } else {
+        const topInnocent = [...GAME_DATA.characters]
+          .filter(c => c.id !== 'char_jiyoung')
+          .sort((a, b) => (finalVoteCounts[b.id] || 0) - (finalVoteCounts[a.id] || 0))[0];
+        if (topInnocent && (finalVoteCounts[topInnocent.id] || 0) > 0) {
+          oscarWinner = `${topInnocent.real_name} (${topInnocent.character_name})`;
+          oscarReason = `결백함에도 수상한 행동과 열연으로 ${finalVoteCounts[topInnocent.id]}표를 끌어모으며 진범의 방패가 된 명품 조연!`;
+        } else {
+          oscarWinner = '문지영 (신데렐라)';
+          oscarReason = '치밀한 독살 트릭과 포커페이스로 끝까지 파티의 긴장감을 주도한 주연 배우!';
+        }
+      }
+
+      const scapegoatCandidates = [...GAME_DATA.characters]
+        .filter(c => c.id !== 'char_jiyoung')
+        .sort((a, b) => (finalVoteCounts[b.id] || 0) - (finalVoteCounts[a.id] || 0));
+      const scapegoat = scapegoatCandidates[0];
+      const scapegoatVotes = scapegoat ? (finalVoteCounts[scapegoat.id] || 0) : 0;
 
       card.innerHTML = `
-        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/40 text-center space-y-2">
-          <div class="text-3xl text-pumpkin-500">🗳️</div>
-          <h3 class="text-sm font-bold text-white">최종 범인 비밀 투표</h3>
-          <p class="text-xs text-gray-300">
-            모든 단서와 알리바이를 종합하여, 박서준을 독살한 <strong class="text-crimson-400">진범 1명</strong>을 지목하세요.
-          </p>
+        <!-- HEADER & FINAL VOTE PROGRESS (진행수만 공개) -->
+        <div class="card-glass rounded-2xl p-4 border border-crimson-500/40 text-center space-y-3">
+          <div class="text-3xl text-crimson-500 animate-pulse">⚖️</div>
+          <div>
+            <h3 class="text-base font-bold text-white">최종 진범 비밀 지목 투표</h3>
+            <p class="text-xs sm:text-sm text-gray-300 mt-1">
+              모든 단서와 알리바이를 종합하여, 박서준을 살해한 <strong class="text-crimson-400">진범 1명</strong>을 최종 지목하세요!
+            </p>
+          </div>
+
+          <!-- PROGRESS BOX (진행수만 공개) -->
+          <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-crimson-400 font-bold flex items-center gap-1.5">
+                <i class="fa-solid fa-users-viewfinder"></i>
+                <span>최종 투표 진행 현황</span>
+              </span>
+              <span class="font-mono font-bold text-white text-sm">
+                ${totalFinalVotes} / ${totalParticipants}명 완료
+              </span>
+            </div>
+            <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-crimson-700 to-crimson-500 h-full rounded-full transition-all duration-500" 
+                   style="width: ${Math.round((totalFinalVotes / totalParticipants) * 100)}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-gray-400">
+              <span>${myFinalVote ? '✓ 나의 최종 투표 완료 (비밀 유지 중)' : '⏳ 아직 투표하지 않음'}</span>
+              <span>전원 투표 후 진범과 전체 공개</span>
+            </div>
+          </div>
         </div>
+
+        <!-- FULL FINAL TALLY (전체 공개: 마감 또는 6단계 시 노출) -->
+        ${isFinalFinished ? `
+          <div class="card-glass rounded-2xl p-4 border border-crimson-500/60 space-y-3 bg-crimson-950/20 shadow-xl animate-fade-in">
+            <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+              <span class="text-sm font-bold text-crimson-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>최종 투표 집계 결과 (전체 공개)</span>
+              </span>
+              <span class="text-xs text-crimson-300 font-mono font-bold bg-crimson-900/80 px-2 py-0.5 rounded border border-crimson-500/40">
+                총 ${totalFinalVotes}명 투표 완료
+              </span>
+            </div>
+
+            <div class="space-y-2.5">
+              ${sortedFinalCandidates.map((char, idx) => {
+                const count = finalVoteCounts[char.id] || 0;
+                const pct = totalFinalVotes > 0 ? Math.round((count / totalFinalVotes) * 100) : 0;
+                const isCulprit = char.id === 'char_jiyoung';
+                return `
+                  <div class="space-y-1">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="font-bold text-white flex items-center gap-1.5">
+                        <span>${char.real_name} (${char.character_name})</span>
+                        ${currentStage >= 6 && isCulprit ? '<span class="text-[10px] bg-crimson-600 text-white font-bold px-1.5 py-0.2 rounded">진범★</span>' : ''}
+                      </span>
+                      <span class="text-crimson-400 font-mono font-bold">${count}표 (${pct}%)</span>
+                    </div>
+                    <div class="w-full bg-gray-800 h-2.5 rounded-full overflow-hidden">
+                      <div class="${isCulprit ? 'bg-crimson-500' : 'bg-gray-500'} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        ` : ''}
 
         <!-- CANDIDATES -->
         <div class="space-y-2">
+          <div class="text-xs font-bold text-gray-400 uppercase tracking-wide px-1 flex items-center justify-between">
+            <span>최종 진범 후보 ${isFinalFinished ? '(투표 마감됨 / 변경 가능)' : '(비밀 투표)'}</span>
+            ${myFinalVote ? '<span class="text-crimson-400 text-[11px]">✓ 지목 완료됨</span>' : ''}
+          </div>
           ${GAME_DATA.characters.map(char => {
             const isMe = char.id === currentUser;
-            const isSelected = myVote === char.id;
-            const costume = userCostumes[char.id] || '코스튬';
+            const isSelected = myFinalVote === char.id;
 
             return `
-              <div onclick="submitVote('${char.id}')" 
+              <div onclick="submitFinalVote('${char.id}')" 
                    class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between ${
                      isSelected 
                        ? 'border-crimson-500 bg-crimson-900/30 shadow-md shadow-crimson-600/20' 
@@ -1088,21 +1516,20 @@ ${char.secret}
                     ${isSelected ? '✓' : char.real_name.charAt(0)}
                   </div>
                   <div>
-                    <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <div class="text-sm font-bold text-white flex items-center gap-1.5">
                       <span>${char.real_name}</span>
-                      <span class="text-[10px] text-gray-400">(${costume})</span>
-                      ${isMe ? '<span class="text-[9px] text-gray-500">(나)</span>' : ''}
+                      ${isMe ? '<span class="text-xs text-gray-400">(나)</span>' : ''}
                     </div>
-                    <p class="text-[10px] text-pumpkin-400/90">${char.character_name}</p>
+                    <p class="text-xs text-pumpkin-400/90">${char.character_name}</p>
                   </div>
                 </div>
                 <div>
                   ${isSelected ? `
-                    <span class="text-[10px] font-bold text-crimson-400 bg-crimson-900/40 px-2 py-0.5 rounded border border-crimson-500/50">
-                      내 지목 대상
+                    <span class="text-xs font-bold text-crimson-400 bg-crimson-900/40 px-2.5 py-1 rounded-full border border-crimson-500/50">
+                      최종 지목 완료
                     </span>
                   ` : `
-                    <span class="text-[10px] text-gray-500 group-hover:text-gray-300">지목하기</span>
+                    <span class="text-xs text-gray-400 hover:text-white">지목하기</span>
                   `}
                 </div>
               </div>
@@ -1110,39 +1537,157 @@ ${char.secret}
           }).join('')}
         </div>
 
-        <!-- STAGE 5 EPILOGUE (진범 공개 버튼) -->
+        <!-- STAGE 6 EPILOGUE (진범 공개) -->
         <div class="pt-4 border-t border-gray-800">
-          ${currentStage >= 5 ? `
-            <div class="card-glass-red rounded-2xl p-4 border border-crimson-500 space-y-3 shadow-2xl animate-fade-in">
-              <div class="flex items-center space-x-2 text-crimson-400 font-bold text-sm">
-                <i class="fa-solid fa-skull"></i>
-                <span>[진범 공개] 사건의 전말 해설</span>
+          ${currentStage >= 6 ? `
+            <div class="card-glass-red rounded-2xl p-5 border border-crimson-500 space-y-4 shadow-2xl animate-fade-in">
+              <div class="flex items-center space-x-2 text-crimson-400 font-bold text-base">
+                <i class="fa-solid fa-skull text-xl animate-pulse"></i>
+                <span>[진범 공개] 사건의 전말 & 살해 트릭 해설</span>
               </div>
 
-              <div class="p-3 bg-black/60 rounded-xl border border-crimson-500/30 space-y-2 text-xs">
-                <div class="text-pumpkin-400 font-bold text-sm">
-                  진범: ${GAME_DATA.epilogue.culprit_name}
+              <!-- CULPRIT BANNER -->
+              <div class="p-4 bg-black/70 rounded-xl border border-crimson-500/40 space-y-2">
+                <div class="text-xs font-mono text-crimson-400 font-bold tracking-widest uppercase">CRIME SCENE SOLVED</div>
+                <div class="text-pumpkin-400 font-extrabold text-lg flex items-center gap-2">
+                  <span>진범: ${GAME_DATA.epilogue.culprit_name}</span>
                 </div>
-                <p class="text-gray-200 leading-relaxed whitespace-pre-line">
-${GAME_DATA.epilogue.full_truth}
+                <p class="text-xs text-gray-300 font-semibold">
+                  ${GAME_DATA.epilogue.summary}
                 </p>
               </div>
 
-              <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1 text-xs">
-                <div class="text-white font-bold text-[11px] flex items-center gap-1">
+              <!-- 🏆 HALLOWEEN PARTY AWARDS -->
+              <div class="card-glass rounded-2xl p-4 border border-amber-500/50 space-y-3 bg-amber-950/25 shadow-xl">
+                <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+                  <span class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy text-amber-400"></i>
+                    <span>할로윈 파티 엔딩 어워즈 & 타이틀 수여식</span>
+                  </span>
+                  <button onclick="copyEndingAwards()" class="text-[11px] bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-lg transition-all flex items-center gap-1 font-semibold">
+                    <i class="fa-solid fa-copy text-[10px]"></i>
+                    <span>단톡방 복사</span>
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2.5 text-xs">
+                  <!-- Sherlock -->
+                  <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-amber-300 flex items-center gap-1.5">
+                        <span>🕵️ 명탐정 셜록상</span>
+                        <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.2 rounded font-mono">진범 검거</span>
+                      </span>
+                      <span class="font-mono text-gray-400 font-semibold">${sherlockVoters.length}명</span>
+                    </div>
+                    <p class="text-white font-bold text-sm">
+                      ${sherlockVoters.length > 0 ? sherlockVoters.join(', ') : '검거 실패 (진범의 완전 범죄)'}
+                    </p>
+                    <p class="text-[11px] text-gray-400">
+                      ${sherlockVoters.length > 0 ? '날카로운 관찰력으로 해골 빨대와 살해 트릭을 간파한 최고의 탐정!' : '모두가 가짜 단서에 현혹되어 진범을 놓쳤습니다.'}
+                    </p>
+                  </div>
+
+                  <!-- Oscar -->
+                  <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-pumpkin-400 flex items-center gap-1.5">
+                        <span>🎭 오스카 명연기상</span>
+                        <span class="text-[10px] bg-pumpkin-500/20 text-pumpkin-300 px-1.5 py-0.2 rounded font-mono">최고의 블러퍼</span>
+                      </span>
+                    </div>
+                    <p class="text-white font-bold text-sm">${oscarWinner}</p>
+                    <p class="text-[11px] text-gray-400">${oscarReason}</p>
+                  </div>
+
+                  <!-- Scapegoat -->
+                  <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1">
+                    <div class="flex items-center justify-between">
+                      <span class="font-bold text-cyan-400 flex items-center gap-1.5">
+                        <span>🕳️ 희대의 삽질상</span>
+                        <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-1.5 py-0.2 rounded font-mono">억울한 희생양</span>
+                      </span>
+                      <span class="font-mono text-cyan-400 font-bold">${scapegoatVotes}표 획득</span>
+                    </div>
+                    <p class="text-white font-bold text-sm">
+                      ${scapegoatVotes > 0 ? `${scapegoat.real_name} (${scapegoat.character_name})` : '희생양 없음 (클린)'}
+                    </p>
+                    <p class="text-[11px] text-gray-400">
+                      ${scapegoatVotes > 0 ? `무고함에도 불구하고 친구들에게 ${scapegoatVotes}표의 몰표를 받은 비운의 희생양!` : '모두가 고르게 의심을 피했습니다.'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- MOTIVE -->
+              <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-2 text-xs sm:text-sm">
+                <div class="text-amber-400 font-bold flex items-center gap-1.5">
+                  <i class="fa-solid fa-heart-crack"></i>
+                  <span>${GAME_DATA.epilogue.motive_title || '살해 동기'}</span>
+                </div>
+                <p class="text-gray-200 leading-relaxed whitespace-pre-line text-xs sm:text-sm">
+${GAME_DATA.epilogue.motive_detail || GAME_DATA.epilogue.full_truth}
+                </p>
+              </div>
+
+              <!-- TRICK & METHOD -->
+              <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-crimson-500/30 space-y-2 text-xs sm:text-sm">
+                <div class="text-crimson-400 font-bold flex items-center gap-1.5">
+                  <i class="fa-solid fa-skull-crossbones"></i>
+                  <span>${GAME_DATA.epilogue.trick_title || '범행 방법 & 독살 트릭'}</span>
+                </div>
+                <p class="text-gray-200 leading-relaxed whitespace-pre-line text-xs sm:text-sm">
+${GAME_DATA.epilogue.trick_detail || ''}
+                </p>
+              </div>
+
+              <!-- AUTOPSY TRICK (다발성 외상의 진실) -->
+              ${GAME_DATA.epilogue.autopsy_trick_detail ? `
+                <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-cyan-500/30 space-y-2 text-xs sm:text-sm">
+                  <div class="text-cyan-400 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-notes-medical"></i>
+                    <span>${GAME_DATA.epilogue.autopsy_trick_title || '다발성 복합 외상의 진실'}</span>
+                  </div>
+                  <p class="text-gray-200 leading-relaxed whitespace-pre-line text-xs sm:text-sm">
+${GAME_DATA.epilogue.autopsy_trick_detail}
+                  </p>
+                </div>
+              ` : ''}
+
+              <!-- SMOKING GUNS -->
+              ${GAME_DATA.epilogue.smoking_guns ? `
+                <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-amber-500/30 space-y-2 text-xs sm:text-sm">
+                  <div class="text-amber-400 font-bold flex items-center gap-1.5">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>결정적 스모킹 건 3가지</span>
+                  </div>
+                  <ul class="text-gray-200 space-y-1.5 text-xs sm:text-sm pl-1">
+                    ${GAME_DATA.epilogue.smoking_guns.map((sg, i) => `
+                      <li class="flex items-start gap-1.5">
+                        <span class="text-amber-400 font-bold font-mono">0${i+1}.</span>
+                        <span>${sg}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+
+              <!-- AFTER STORY -->
+              <div class="p-3.5 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1.5 text-xs sm:text-sm">
+                <div class="text-white font-bold text-xs sm:text-sm flex items-center gap-1.5">
                   <i class="fa-solid fa-clapperboard text-pumpkin-500"></i>
                   <span>사건 이후 비하인드 스토리</span>
                 </div>
-                <p class="text-gray-300 text-[11px] leading-relaxed">
+                <p class="text-gray-300 text-xs sm:text-sm leading-relaxed">
                   ${GAME_DATA.epilogue.after_story}
                 </p>
               </div>
             </div>
           ` : `
             <div class="text-center space-y-2">
-              <p class="text-[11px] text-gray-400">모두 투표를 마쳤다면 상단 탭에서 <strong class="text-pumpkin-400">"5. 진범공개"</strong>를 누르거나 아래 버튼을 누르세요.</p>
-              <button onclick="changeStage(5)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-crimson-600/30">
-                🚨 전원 투표 완료! 진범 & 전말 공개하기
+              <p class="text-xs text-gray-400">모두 최종 투표를 마쳤다면 상단 탭에서 <strong class="text-pumpkin-400">"6. 진범공개"</strong>를 누르거나 아래 버튼을 누르세요.</p>
+              <button onclick="changeStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-crimson-600/30">
+                🚨 전원 투표 완료! 최종 득표 결과 & 진범 공개하기 ➔
               </button>
             </div>
           `}
@@ -1151,11 +1696,64 @@ ${GAME_DATA.epilogue.full_truth}
       container.appendChild(card);
     }
 
-    function submitVote(targetCharId) {
+    function toggleMidtermReveal(forceVal) {
+      isMidtermRevealed = (typeof forceVal === 'boolean') ? forceVal : !isMidtermRevealed;
+      saveLocalStorage();
+      renderCurrentTab();
+      if (isMidtermRevealed) {
+        showToast('📢 1차 중간 투표 결과가 전체 공개되었습니다!');
+      } else {
+        showToast('🔒 1차 중간 투표 결과가 비공개로 전환되었습니다.');
+      }
+    }
+
+    function toggleFinalReveal(forceVal) {
+      isFinalRevealed = (typeof forceVal === 'boolean') ? forceVal : !isFinalRevealed;
+      saveLocalStorage();
+      renderCurrentTab();
+    }
+
+    function submitMidtermVote(targetCharId) {
+      if (!currentUser) return;
+      midtermVotes[currentUser] = targetCharId;
+      saveLocalStorage();
+      renderCurrentTab();
+      const targetChar = GAME_DATA.characters.find(c => c.id === targetCharId);
+      showToast(`🗳️ 1차 중간 지목: [${targetChar ? targetChar.real_name : '용의자'}] 투표 완료!`);
+    }
+
+    function submitFinalVote(targetCharId) {
       if (!currentUser) return;
       votes[currentUser] = targetCharId;
       saveLocalStorage();
-      renderVoteTab(document.getElementById('app-viewport'));
+      renderCurrentTab();
+      const targetChar = GAME_DATA.characters.find(c => c.id === targetCharId);
+      showToast(`⚖️ 최종 지목: [${targetChar ? targetChar.real_name : '용의자'}] 투표 완료!`);
+    }
+
+    function setSuspectStars(charId, stars) {
+      if (!userNotes[charId]) userNotes[charId] = { stars: 0, memo: '' };
+      userNotes[charId].stars = stars;
+      saveLocalStorage();
+      renderCurrentTab();
+    }
+
+    function updateSuspectMemo(charId, memoText) {
+      if (!userNotes[charId]) userNotes[charId] = { stars: 0, memo: '' };
+      userNotes[charId].memo = memoText;
+      saveLocalStorage();
+      const indicator = document.getElementById(`memo-saved-indicator-${charId}`);
+      if (indicator) {
+        indicator.classList.remove('hidden');
+        clearTimeout(indicator._timer);
+        indicator._timer = setTimeout(() => {
+          indicator.classList.add('hidden');
+        }, 1200);
+      }
+    }
+
+    function submitVote(targetCharId) {
+      submitFinalVote(targetCharId);
     }
 
     // 60-Minute Countdown Timer
@@ -1298,6 +1896,82 @@ ${GAME_DATA.epilogue.full_truth}
         osc.start(audioCtx.currentTime + idx * 0.25);
         osc.stop(audioCtx.currentTime + idx * 0.25 + 1.9);
       });
+    }
+
+    // ==========================================
+    // ENDING AWARDS & COPY SUMMARY
+    // ==========================================
+    function copyEndingAwards() {
+      if (!GAME_DATA) return;
+      const finalVoteCounts = {};
+      GAME_DATA.characters.forEach(c => { finalVoteCounts[c.id] = 0; });
+      Object.values(votes).forEach(targetId => {
+        if (finalVoteCounts[targetId] !== undefined) finalVoteCounts[targetId]++;
+      });
+
+      const sherlockVoters = Object.entries(votes)
+        .filter(([voterId, targetId]) => targetId === 'char_jiyoung')
+        .map(([voterId]) => {
+          const c = GAME_DATA.characters.find(char => char.id === voterId);
+          return c ? c.real_name : voterId;
+        });
+
+      const culpritVotes = finalVoteCounts['char_jiyoung'] || 0;
+      let oscarText = '';
+      if (culpritVotes <= 2) {
+        oscarText = `문지영 (단 ${culpritVotes}표로 포커페이스 성공)`;
+      } else {
+        const topInnocent = [...GAME_DATA.characters]
+          .filter(c => c.id !== 'char_jiyoung')
+          .sort((a, b) => (finalVoteCounts[b.id] || 0) - (finalVoteCounts[a.id] || 0))[0];
+        oscarText = topInnocent ? `${topInnocent.real_name} (${finalVoteCounts[topInnocent.id] || 0}표 획득, 최고의 방패)` : '문지영';
+      }
+
+      const scapegoatCandidates = [...GAME_DATA.characters]
+        .filter(c => c.id !== 'char_jiyoung')
+        .sort((a, b) => (finalVoteCounts[b.id] || 0) - (finalVoteCounts[a.id] || 0));
+      const scapegoat = scapegoatCandidates[0];
+      const scapegoatVotes = scapegoat ? (finalVoteCounts[scapegoat.id] || 0) : 0;
+      const scapegoatText = scapegoatVotes > 0 ? `${scapegoat.real_name} (${scapegoatVotes}표 획득)` : '없음';
+
+      const copyText = `🎃 [붉은 호박의 밤: 8인의 할로윈 미스터리 - 최종 결과] 🎃
+
+⚖️ 최종 집계:
+- 진범: 문지영 (전 약혼녀 / 바텐더)
+- 진범 득표수: ${culpritVotes}표
+
+🏆 할로윈 파티 명예의 전당:
+🕵️ [명탐정 셜록상]: ${sherlockVoters.length > 0 ? sherlockVoters.join(', ') : '검거 실패'}
+🎭 [오스카 명연기상]: ${oscarText}
+🕳️ [희대의 삽질상]: ${scapegoatText}
+
+함께 즐겨주셔서 감사합니다! 🍷🎃`;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(copyText).then(() => {
+          showToast('📋 단톡방 공유용 결과 텍스트가 복사되었습니다!');
+        }).catch(() => {
+          fallbackCopyText(copyText);
+        });
+      } else {
+        fallbackCopyText(copyText);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast('📋 결과가 클립보드에 복사되었습니다!');
+      } catch (err) {
+        prompt('아래 텍스트를 복사하세요:', text);
+      }
+      document.body.removeChild(ta);
     }
 
     // Initialize on page load
