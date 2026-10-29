@@ -88,80 +88,119 @@
     {
       "time": "오후 9:30",
       "actors": "참가자 8인 전원",
+      "location": "루나 하우스 전체",
       "tag": "파티 시작",
-      "summary": "루나 하우스 전원 도착 완료. 할로윈 코스튬 착용 및 음악 재생과 함께 파티 개시."
+      "summary": "루나 하우스 참가자 8인 전원 도착 완료. 파티 개시 및 음악 재생.",
+      "private_character_id": null,
+      "private_truth": null
     },
     {
       "time": "오후 10:00",
       "actors": "박서준",
+      "location": "메인 라운지",
       "tag": "샴페인 건배",
-      "summary": "호스트 서준이 샴페인을 터뜨리며 '오늘 밤 인생이 바뀔 중대 발표를 하겠다'고 선언."
+      "summary": "호스트 박서준이 샴페인을 터뜨리며 '오늘 밤 중대 발표가 있다'고 건배 제의.",
+      "private_character_id": null,
+      "private_truth": null
     },
     {
       "time": "오후 10:20",
-      "actors": "조신영 ⚡ 박서준",
-      "tag": "대관비 독촉",
-      "summary": "신영이 구석에서 서준에게 미입금 대관비 100만 원 당일 입금을 강력 독촉하며 멱살을 잡음."
+      "actors": "조신영 & 박서준",
+      "location": "라운지 구석 테이블",
+      "tag": "동석 목격",
+      "summary": "라운지 구석 테이블에서 조신영과 박서준이 마주 보고 서 있는 모습이 목격됨.",
+      "private_character_id": "char_shinyoung",
+      "private_truth": "서준에게 미입금 대관비 100만 원 당일 입금을 강력 독촉하며 멱살을 잡았다."
     },
     {
       "time": "오후 10:25",
-      "actors": "도주현 ⚡ 박서준",
-      "tag": "복도 몸싸움",
-      "summary": "주현이 대기업 인턴 허위 투서 건으로 서준의 멱살을 잡음. 서준의 셔츠에 와인이 튐."
+      "actors": "도주현 & 박서준",
+      "location": "현관 복도 부근",
+      "tag": "동석 목격",
+      "summary": "현관 복도 통로 부근에서 도주현과 박서준이 가까이 붙어 서 있는 모습이 목격됨.",
+      "private_character_id": "char_juhyun",
+      "private_truth": "대기업 인턴 허위 학폭 투서 건으로 서준의 멱살을 잡았고, 서준의 셔츠에 와인이 튀었다."
     },
     {
       "time": "오후 10:28",
-      "actors": "양승현 ⚡ 박서준",
-      "tag": "비상구 실랑이",
-      "summary": "승현이 서준을 비상구 철문 앞으로 불러내 도용당한 법인 인감과 3천만 원 불법 대출 건으로 격렬한 실랑이를 벌임."
+      "actors": "양승현 & 박서준",
+      "location": "루프탑 비상구 철문",
+      "tag": "동행 목격",
+      "summary": "양승현과 박서준이 루프탑 비상구 철문 쪽으로 함께 나가는 모습이 목격됨.",
+      "private_character_id": "char_seunghyun",
+      "private_truth": "도용당한 법인 인감과 3천만 원 불법 대출 건으로 비상구에서 전기충격기를 꺼내 서준의 손을 지지며 담판을 지었다."
     },
     {
       "time": "오후 10:35",
       "actors": "조신영",
-      "tag": "배달 대기",
-      "summary": "피자 배달이 늦어져 현관문 앞 복도에서 배달 앱 고객센터와 통화."
+      "location": "현관문 앞 복도",
+      "tag": "단독 목격",
+      "summary": "현관문 앞 복도에서 조신영이 혼자 스마트폰을 보며 서성이는 모습이 목격됨.",
+      "private_character_id": "char_shinyoung",
+      "private_truth": "배달 피자가 늦어져 현관문 복도에서 배달 앱 고객센터와 통화 중이었다."
     },
     {
       "time": "오후 10:38",
-      "actors": "김유은 ➔ 박서준",
-      "tag": "칵테일 전달",
-      "summary": "유은이 마녀 솥 볼에서 만든 붉은 칵테일을 서준에게 건넴. 서준이 소파 테이블에 잔을 둠."
+      "actors": "김유은 & 박서준",
+      "location": "칵테일 바 카운터",
+      "tag": "동석 목격",
+      "summary": "칵테일 바 카운터에서 김유은이 박서준에게 유리잔을 건네는 모습이 목격됨.",
+      "private_character_id": "char_yueun",
+      "private_truth": "마녀 솥 볼에서 만든 붉은 칵테일을 서준에게 건넸고, 서준이 이를 들고 VIP 소파로 향했다."
     },
     {
       "time": "오후 10:40",
-      "actors": "김건희 ⚡ 박서준",
-      "tag": "테라스 격투",
-      "summary": "건희가 서준의 방콕 편도 티켓을 발견하고 테라스에서 격렬히 몸싸움 ('자수해라')."
+      "actors": "김건희 & 박서준",
+      "location": "루프탑 야외 테라스",
+      "tag": "동행 목격",
+      "summary": "루프탑 야외 테라스 난간 근처에서 김건희와 박서준이 함께 있는 모습이 목격됨.",
+      "private_character_id": "char_geonhee",
+      "private_truth": "서준의 주머니에서 방콕 편도 티켓을 발견하고 테라스에서 격렬히 멱살잡이를 하며 경찰에 자수하라고 다퉜다."
     },
     {
       "time": "오후 10:42",
-      "actors": "안보영 ➔ 포토존",
-      "tag": "카메라 & 소품 조율",
-      "summary": "보영이 포토존 삼각대와 조명을 조율하며 서준의 가방이 놓인 콘솔 주변을 서성임."
+      "actors": "안보영",
+      "location": "포토존 콘솔 테이블",
+      "tag": "단독 목격",
+      "summary": "포토존 삼각대와 소품 콘솔 테이블 주변에서 안보영이 서성이는 모습이 목격됨.",
+      "private_character_id": "char_boyoung",
+      "private_truth": "서준의 가방이 놓인 콘솔 주변을 서성이다 가방을 뒤져 롤렉스 위조 감정서를 빼돌렸다."
     },
     {
       "time": "오후 10:44",
-      "actors": "문지영 ➔ VIP 소파",
-      "tag": "소품 세팅 & 대화",
-      "summary": "지영이 VIP 소파의 서준에게 다가가 귓속말을 나누고 소파 앞 테이블 장식 소품을 정리함."
+      "actors": "문지영 & 박서준",
+      "location": "VIP 휴게실 소파",
+      "tag": "동석 목격",
+      "summary": "VIP 휴게실 소파 쪽에서 문지영이 박서준에게 다가가 대화를 나누는 모습이 목격됨.",
+      "private_character_id": "char_jiyoung",
+      "private_truth": "서준의 칵테일 잔에 독(청산가리)이 코팅된 블랙 해골 빨대를 꽂아두고 다정하게 귓속말을 나누었다."
     },
     {
       "time": "오후 10:45",
-      "actors": "권민호 ➔ 배전반",
-      "tag": "3분 전면 암전",
-      "summary": "민호가 조명 스위치를 내리고 카운트다운 BGM 재생. 실내 붉은 조명만 남음."
+      "actors": "권민호",
+      "location": "조명 배전반 앞",
+      "tag": "배전반 조작",
+      "summary": "권민호가 조명 스위치 배전반을 내리며 3분 전면 암전 이벤트 시작.",
+      "private_character_id": "char_minho",
+      "private_truth": "조명을 끄고 BGM을 재생한 뒤, 어둠을 틈타 바닥에 떨어진 서준의 명품 지갑에서 20만 원을 훔쳤다."
     },
     {
       "time": "오후 10:46",
-      "actors": "VIP 휴게실 [암전 속]",
+      "actors": "VIP 휴게실 소파",
+      "location": "VIP 휴게실 [암전 속]",
       "tag": "의문의 충격음",
-      "summary": "암전 도중 VIP 휴게실 소파 쪽에서 둔탁하게 쿵 부딪히는 소리와 헐떡이는 거친 숨소리가 들림."
+      "summary": "암전 도중 VIP 휴게실 소파 쪽에서 둔탁하게 쿵 부딪히는 소리와 헐떡이는 거친 숨소리가 들림.",
+      "private_character_id": null,
+      "private_truth": null
     },
     {
       "time": "오후 10:50",
-      "actors": "권민호 ➔ 전원",
+      "actors": "권민호 & 전원",
+      "location": "VIP 휴게실 소파",
       "tag": "시신 발견",
-      "summary": "조명 재점등. 소파에 쓰러져 미동 없는 박서준 발견 후 민호가 비명을 지름."
+      "summary": "조명 재점등. 소파에 쓰러져 미동 없는 박서준 발견 후 민호의 비명으로 파티 중단.",
+      "private_character_id": null,
+      "private_truth": null
     }
   ],
   "characters": [

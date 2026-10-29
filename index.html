@@ -256,8 +256,8 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset from test phase (v1.1.0: 8-player expansion)
-      const APP_VERSION = 'v1.1.0-final';
+      // Clean production reset (v1.2.0: private timeline & interactive interrogation notebooks)
+      const APP_VERSION = 'v1.2.0-clean';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);
@@ -636,21 +636,37 @@ ${char.secret}
               <i class="fa-solid fa-timeline text-pumpkin-500"></i>
               <span>오늘 밤 사건 타임라인 (오후 9:30 ~ 오후 10:50)</span>
             </div>
-            <span class="text-xs text-pumpkin-400 font-mono">수사 기록</span>
+            <span class="text-xs text-pumpkin-400 font-mono">목격 기록</span>
           </div>
+          <p class="text-[11px] text-gray-400 leading-relaxed">
+            ※ 당일 밤 박서준과 마주친 목격 위치와 인물 기록입니다. 각자가 그 시간 무엇을 했는지는 직접 탐문하거나 본인 화면에서만 확인할 수 있습니다.
+          </p>
 
-          <div class="space-y-3 border-l-2 border-pumpkin-500/40 pl-3.5 ml-2">
-            ${GAME_DATA.timeline.map(t => `
-              <div class="relative group pb-1">
-                <div class="absolute -left-[20px] top-1.5 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900 group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(255,115,0,0.8)]"></div>
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-mono text-xs text-pumpkin-400 font-bold bg-pumpkin-500/15 px-2 py-0.5 rounded border border-pumpkin-500/30">${t.time}</span>
-                  <span class="text-xs font-bold text-white bg-gothic-800 px-2 py-0.5 rounded border border-gray-700">${t.actors}</span>
-                  <span class="text-xs text-crimson-400 font-semibold bg-crimson-900/30 px-2 py-0.5 rounded border border-crimson-500/30">${t.tag}</span>
+          <div class="space-y-3.5 border-l-2 border-pumpkin-500/40 pl-3.5 ml-2 mt-2">
+            ${GAME_DATA.timeline.map(t => {
+              const isMyAction = currentUser && t.private_character_id === currentUser && t.private_truth;
+              return `
+                <div class="relative group pb-2">
+                  <div class="absolute -left-[20px] top-1.5 w-2.5 h-2.5 rounded-full ${isMyAction ? 'bg-crimson-500 scale-125' : 'bg-pumpkin-500'} border-2 border-gothic-900 group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(255,115,0,0.8)]"></div>
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="font-mono text-xs text-pumpkin-400 font-bold bg-pumpkin-500/15 px-2 py-0.5 rounded border border-pumpkin-500/30">${t.time}</span>
+                    <span class="text-xs font-bold text-white bg-gothic-800 px-2 py-0.5 rounded border border-gray-700">${t.actors}</span>
+                    ${t.location ? `<span class="text-[10px] text-gray-300 bg-gothic-900 px-2 py-0.5 rounded border border-gray-800"><i class="fa-solid fa-location-dot text-pumpkin-500 mr-1 text-[9px]"></i>${t.location}</span>` : ''}
+                    <span class="text-[10px] text-pumpkin-300 font-semibold bg-pumpkin-900/30 px-2 py-0.5 rounded border border-pumpkin-500/30">${t.tag}</span>
+                  </div>
+                  <p class="text-gray-200 text-xs sm:text-sm mt-1.5 leading-relaxed pl-0.5">${t.summary || t.event}</p>
+                  ${isMyAction ? `
+                    <div class="mt-2 p-2.5 rounded-xl bg-crimson-950/40 border border-crimson-500/40 text-xs text-red-100 shadow-sm animate-fade-in">
+                      <div class="flex items-center gap-1.5 font-bold text-crimson-400 mb-1">
+                        <i class="fa-solid fa-lock text-[10px]"></i>
+                        <span>[내 시점의 진실] 이 시간 내가 했던 행동 (나에게만 표시됨)</span>
+                      </div>
+                      <p class="leading-relaxed pl-1 text-red-200">${t.private_truth}</p>
+                    </div>
+                  ` : ''}
                 </div>
-                <p class="text-gray-200 text-sm mt-1.5 leading-relaxed pl-0.5">${t.summary || t.event}</p>
-              </div>
-            `).join('')}
+              `;
+            }).join('')}
           </div>
         </div>
       `;
@@ -1098,19 +1114,19 @@ ${char.secret}
           <div>
             <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
               <i class="fa-solid fa-masks-theater text-pumpkin-500"></i>
-              <span>용의자 8인 프로필 & 모임 경위</span>
+              <span>용의자 8인 프로필 & 탐문 수첩</span>
             </h3>
-            <p class="text-[10px] text-gray-400">서로의 표정과 파티 참석 경위, 알리바이를 관찰하세요.</p>
+            <p class="text-[10px] text-gray-400">참석 경위와 알리바이는 직접 질문하고 나만의 수첩에 기록하세요.</p>
           </div>
           <button onclick="openSelectRoleModal()" class="text-[10px] text-pumpkin-400 border border-pumpkin-500/30 px-2.5 py-1 rounded-full hover:bg-pumpkin-500/10 transition-all font-semibold">
             내 역할 변경
           </button>
         </div>
 
-        <div class="space-y-2.5">
+        <div class="space-y-3">
           ${GAME_DATA.characters.map(char => {
             const isMe = char.id === currentUser;
-            const noteData = userNotes[char.id] || { stars: 0, memo: '' };
+            const noteData = (userNotes && userNotes[char.id]) ? userNotes[char.id] : { stars: 0, gathering: '', alibi: '', memo: '' };
 
             return `
               <div class="card-glass rounded-2xl p-3.5 border ${isMe ? 'border-pumpkin-500 shadow-md shadow-pumpkin-500/10' : 'border-gray-800'} space-y-2.5">
@@ -1134,14 +1150,43 @@ ${char.secret}
                   </span>
                 </div>
 
-                <div class="text-[11px] text-gray-300 bg-gothic-900/60 p-2.5 rounded-xl border border-gray-800/80 space-y-1.5">
-                  <div><strong class="text-pumpkin-400">파티 참석 경위:</strong> ${char.gathering_reason || char.relationship}</div>
-                  <div><strong class="text-gray-400">공개 알리바이:</strong> "${char.alibi}"</div>
-                </div>
+                ${isMe ? `
+                  <!-- MY SCRIPT & SECRET REFERENCE (내 화면에만 보이는 참조 가이드) -->
+                  <div class="text-[11px] text-gray-200 bg-gothic-900/90 p-3 rounded-xl border border-pumpkin-500/40 space-y-2">
+                    <div>
+                      <span class="text-pumpkin-400 font-bold flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-bullhorn text-[10px]"></i>
+                        <span>모두에게 말할 나의 겉 참석 경위:</span>
+                      </span>
+                      <p class="text-gray-300 pl-1 leading-relaxed">"${char.public_info || char.relationship}"</p>
+                    </div>
+                    <div class="border-t border-gray-800/80 pt-1.5">
+                      <span class="text-gray-300 font-bold flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-clock text-[10px] text-pumpkin-400"></i>
+                        <span>모두에게 둘러댈 나의 공개 알리바이:</span>
+                      </span>
+                      <p class="text-gray-300 pl-1 leading-relaxed">"${char.alibi}"</p>
+                    </div>
+                    <div class="border-t border-crimson-500/30 pt-1.5 bg-crimson-950/20 p-2 rounded-lg">
+                      <span class="text-crimson-400 font-bold flex items-center gap-1 mb-0.5">
+                        <i class="fa-solid fa-lock text-[10px]"></i>
+                        <span>[나만의 비밀] 파티에 오게 된 진짜 속사정:</span>
+                      </span>
+                      <p class="text-red-100 pl-1 leading-relaxed">${char.gathering_reason || char.relationship}</p>
+                    </div>
+                  </div>
+                ` : `
+                  <!-- BASIC RELATIONSHIP (다른 참가자 겉보기 정보) -->
+                  <div class="text-[11px] text-gray-300 bg-gothic-900/60 p-2.5 rounded-xl border border-gray-800/80 space-y-1">
+                    <div><strong class="text-pumpkin-400">피해자와의 관계:</strong> ${char.relationship}</div>
+                    <div class="text-[10px] text-gray-400 flex items-center gap-1 mt-1">
+                      <i class="fa-solid fa-circle-question text-[10px] text-pumpkin-400"></i>
+                      <span>파티 참석 경위와 암전 알리바이는 직접 질문하고 아래 탐문 수첩에 기록하세요!</span>
+                    </div>
+                  </div>
 
-                ${!isMe ? `
-                  <!-- PRIVATE SUSPECT NOTEBOOK (나만의 비밀 추리 수첩) -->
-                  <div class="bg-black/60 p-2.5 rounded-xl border border-gray-800/90 space-y-2">
+                  <!-- INTERACTIVE SUSPECT NOTEBOOK (개개인이 직접 작성해서 채워가는 수첩) -->
+                  <div class="bg-black/60 p-2.5 rounded-xl border border-gray-800/90 space-y-2.5">
                     <div class="flex items-center justify-between text-[11px]">
                       <span class="font-bold text-gray-300 flex items-center gap-1.5">
                         <i class="fa-solid fa-user-secret text-amber-400 text-xs"></i>
@@ -1149,11 +1194,11 @@ ${char.secret}
                       </span>
                       <div class="flex items-center gap-0.5">
                         ${[1, 2, 3, 4, 5].map(starNum => `
-                          <button type="button" onclick="setSuspectStars('${char.id}', ${starNum})" class="text-sm p-0.5 transition-transform active:scale-125 focus:outline-none ${starNum <= noteData.stars ? 'text-amber-400' : 'text-gray-600 hover:text-gray-400'}" title="${starNum}점 의심">
+                          <button type="button" onclick="setSuspectStars('${char.id}', ${starNum})" class="text-sm p-0.5 transition-transform active:scale-125 focus:outline-none ${starNum <= (noteData.stars || 0) ? 'text-amber-400' : 'text-gray-600 hover:text-gray-400'}" title="${starNum}점 의심">
                             ★
                           </button>
                         `).join('')}
-                        ${noteData.stars > 0 ? `
+                        ${(noteData.stars || 0) > 0 ? `
                           <button type="button" onclick="setSuspectStars('${char.id}', 0)" class="text-[9px] text-gray-500 hover:text-gray-300 ml-1 font-mono" title="별점 취소">
                             ✕
                           </button>
@@ -1161,22 +1206,55 @@ ${char.secret}
                       </div>
                     </div>
 
+                    <!-- 1. 참석 경위 탐문 메모 -->
                     <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-pumpkin-400 flex items-center gap-1">
+                        <i class="fa-solid fa-door-open text-[9px]"></i>
+                        <span>탐문 기록: 파티에 온 이유 (본인 주장 청취)</span>
+                      </label>
+                      <input 
+                        type="text"
+                        value="${(noteData.gathering || '').replace(/"/g, '&quot;')}"
+                        oninput="updateSuspectField('${char.id}', 'gathering', this.value)"
+                        placeholder="이 사람이 밝힌 파티 참석 이유..."
+                        class="w-full bg-gothic-900/90 border border-gray-800 focus:border-amber-500/60 rounded-lg px-2.5 py-1.5 text-[11px] text-gray-200 placeholder-gray-500 focus:outline-none transition-all">
+                    </div>
+
+                    <!-- 2. 알리바이 탐문 메모 -->
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-gray-300 flex items-center gap-1">
+                        <i class="fa-solid fa-clock text-[9px] text-pumpkin-400"></i>
+                        <span>탐문 기록: 10:45 암전 알리바이 (본인 주장 청취)</span>
+                      </label>
+                      <input 
+                        type="text"
+                        value="${(noteData.alibi || '').replace(/"/g, '&quot;')}"
+                        oninput="updateSuspectField('${char.id}', 'alibi', this.value)"
+                        placeholder="오후 10:45 암전 전후 어디서 뭘 했다고 하는가?..."
+                        class="w-full bg-gothic-900/90 border border-gray-800 focus:border-amber-500/60 rounded-lg px-2.5 py-1.5 text-[11px] text-gray-200 placeholder-gray-500 focus:outline-none transition-all">
+                    </div>
+
+                    <!-- 3. 의심 및 모순점 메모 -->
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-amber-400/90 flex items-center gap-1">
+                        <i class="fa-solid fa-pen-to-square text-[9px]"></i>
+                        <span>비밀 메모: 모순점 & 의심 정황</span>
+                      </label>
                       <textarea 
-                        oninput="updateSuspectMemo('${char.id}', this.value)" 
-                        placeholder="이 용의자에 대한 비밀 메모 (수상한 표정, 모순된 알리바이, 귓속말 내용 등)..." 
+                        oninput="updateSuspectField('${char.id}', 'memo', this.value)" 
+                        placeholder="수상한 표정, 타임라인과의 모순, 귓속말 내용 등..." 
                         rows="2" 
                         class="w-full bg-gothic-900/90 border border-gray-800 focus:border-amber-500/60 rounded-lg p-2 text-[11px] text-gray-200 placeholder-gray-500 focus:outline-none transition-all resize-none">${noteData.memo || ''}</textarea>
                       <div class="flex items-center justify-between text-[9px] text-gray-500 px-0.5">
                         <span class="flex items-center gap-1">
                           <i class="fa-solid fa-lock text-[8px] text-emerald-500"></i>
-                          <span>내 스마트폰에만 저장되는 비공개 수첩</span>
+                          <span>내 기기에만 저장되는 비공개 수첩</span>
                         </span>
                         <span id="memo-saved-indicator-${char.id}" class="text-emerald-400/90 font-mono hidden">저장됨 ✓</span>
                       </div>
                     </div>
                   </div>
-                ` : ''}
+                `}
               </div>
             `;
           }).join('')}
@@ -1731,16 +1809,23 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
       showToast(`⚖️ 최종 지목: [${targetChar ? targetChar.real_name : '용의자'}] 투표 완료!`);
     }
 
+    function getSuspectNote(charId) {
+      if (!userNotes[charId]) {
+        userNotes[charId] = { stars: 0, gathering: '', alibi: '', memo: '' };
+      }
+      return userNotes[charId];
+    }
+
     function setSuspectStars(charId, stars) {
-      if (!userNotes[charId]) userNotes[charId] = { stars: 0, memo: '' };
-      userNotes[charId].stars = stars;
+      const note = getSuspectNote(charId);
+      note.stars = stars;
       saveLocalStorage();
       renderCurrentTab();
     }
 
-    function updateSuspectMemo(charId, memoText) {
-      if (!userNotes[charId]) userNotes[charId] = { stars: 0, memo: '' };
-      userNotes[charId].memo = memoText;
+    function updateSuspectField(charId, field, val) {
+      const note = getSuspectNote(charId);
+      note[field] = val;
       saveLocalStorage();
       const indicator = document.getElementById(`memo-saved-indicator-${charId}`);
       if (indicator) {
@@ -1750,6 +1835,10 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
           indicator.classList.add('hidden');
         }, 1200);
       }
+    }
+
+    function updateSuspectMemo(charId, memoText) {
+      updateSuspectField(charId, 'memo', memoText);
     }
 
     function submitVote(targetCharId) {
