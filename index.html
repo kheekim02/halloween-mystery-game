@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>할로윈 파티룸: 붉은 호박의 밤 | 머더 미스터리</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            pumpkin: {
+              400: '#ff9233',
+              500: '#ff7300',
+              600: '#e65c00'
+            },
+            crimson: {
+              500: '#e63946',
+              600: '#c52233',
+              700: '#9b111e'
+            },
+            gothic: {
+              900: '#0d0b14',
+              800: '#171424',
+              700: '#231e36',
+              600: '#322b4d'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+    * {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: #0d0b14;
+      color: #f3f4f6;
+    }
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #171424;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #322b4d;
+      border-radius: 3px;
+    }
+    .neon-glow-orange {
+      text-shadow: 0 0 10px rgba(255, 115, 0, 0.6), 0 0 20px rgba(255, 115, 0, 0.3);
+    }
+    .neon-glow-red {
+      text-shadow: 0 0 10px rgba(230, 57, 70, 0.7), 0 0 25px rgba(230, 57, 70, 0.4);
+    }
+    .card-glass {
+      background: rgba(23, 20, 36, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 115, 0, 0.2);
+    }
+    .card-glass-red {
+      background: rgba(23, 20, 36, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(230, 57, 70, 0.35);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col pb-20 selection:bg-pumpkin-500 selection:text-white">
+
+  <!-- TOP BAR -->
+  <header class="sticky top-0 z-50 bg-gothic-900/95 backdrop-blur-md border-b border-pumpkin-500/20 px-4 py-2.5 flex items-center justify-between shadow-lg">
+    <div class="flex items-center space-x-2">
+      <span class="text-2xl animate-pulse">🎃</span>
+      <div>
+        <h1 class="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+          <span>붉은 호박의 밤</span>
+          <span class="text-[10px] bg-pumpkin-500/20 text-pumpkin-400 px-1.5 py-0.5 rounded border border-pumpkin-500/30 font-medium">60분 추리</span>
+        </h1>
+        <p class="text-[10px] text-gray-400" id="current-user-badge">플레이어를 선택하세요</p>
+      </div>
+    </div>
+    
+    <div class="flex items-center space-x-2">
+      <!-- 60m TIMER BADGE -->
+      <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex items-center space-x-1.5 bg-gothic-800 border border-pumpkin-500/30 hover:border-pumpkin-500 px-2.5 py-1 rounded-full text-xs font-mono text-pumpkin-400 shadow-inner">
+        <i class="fa-solid fa-clock text-[11px] text-pumpkin-500"></i>
+        <span id="timer-display" class="font-bold">60:00</span>
+      </button>
+
+      <!-- BGM SOUND TOGGLE -->
+      <button onclick="toggleAudio()" id="bgm-btn" class="w-8 h-8 rounded-full bg-gothic-800 border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white text-xs">
+        <i class="fa-solid fa-volume-xmark" id="bgm-icon"></i>
+      </button>
+
+      <!-- SWITCH ROLE -->
+      <button onclick="openSelectRoleModal()" class="w-8 h-8 rounded-full bg-gothic-800 border border-gray-700 flex items-center justify-center text-gray-400 hover:text-white text-xs" title="내 역할 변경">
+        <i class="fa-solid fa-user-gear"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- STAGE PROGRESS BAR -->
+  <div class="bg-gothic-800/80 px-4 py-2 border-b border-gray-800 flex items-center justify-between overflow-x-auto text-[11px] no-scrollbar">
+    <div class="flex items-center space-x-2 min-w-max" id="stage-tabs-container">
+      <button onclick="changeStage(0)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40" data-stage="0">0. 사건발생</button>
+      <button onclick="changeStage(1)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="1">1. 참가자&코스튬</button>
+      <button onclick="changeStage(2)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="2">2. 1차 단서수색</button>
+      <button onclick="changeStage(3)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="3">3. 2차 심층수색</button>
+      <button onclick="changeStage(4)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="4">4. 비밀투표</button>
+      <button onclick="changeStage(5)" class="stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="5">5. 진범공개</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="flex-1 max-w-xl w-full mx-auto p-4 space-y-4" id="app-viewport">
+    <!-- Dynamic views injected here by app.js -->
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="fixed bottom-0 left-0 right-0 z-40 bg-gothic-900/95 backdrop-blur-lg border-t border-gray-800 max-w-xl mx-auto px-4 py-2 flex items-center justify-around shadow-2xl">
+    <button onclick="setTab('role')" id="nav-btn-role" class="nav-btn flex flex-col items-center justify-center text-pumpkin-400">
+      <i class="fa-solid fa-id-card-clip text-lg mb-0.5"></i>
+      <span class="text-[10px] font-semibold">내 비밀역할</span>
+    </button>
+    <button onclick="setTab('story')" id="nav-btn-story" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+      <i class="fa-solid fa-book-skull text-lg mb-0.5"></i>
+      <span class="text-[10px] font-semibold">사건현장</span>
+    </button>
+    <button onclick="setTab('clues')" id="nav-btn-clues" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 relative">
+      <i class="fa-solid fa-magnifying-glass text-lg mb-0.5"></i>
+      <span class="text-[10px] font-semibold">단서보관소</span>
+      <span id="clue-badge-count" class="absolute -top-1 -right-2 bg-crimson-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+    </button>
+    <button onclick="setTab('players')" id="nav-btn-players" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+      <i class="fa-solid fa-masks-theater text-lg mb-0.5"></i>
+      <span class="text-[10px] font-semibold">용의자7인</span>
+    </button>
+    <button onclick="setTab('vote')" id="nav-btn-vote" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+      <i class="fa-solid fa-check-to-slot text-lg mb-0.5"></i>
+      <span class="text-[10px] font-semibold">지목투표</span>
+    </button>
+  </nav>
+
+  <!-- ROLE SELECT MODAL (LOGIN) -->
+  <div id="role-select-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="card-glass rounded-2xl max-w-md w-full p-5 border border-pumpkin-500/40 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="text-center space-y-1">
+        <div class="inline-block p-3 rounded-full bg-pumpkin-500/10 border border-pumpkin-500/30 text-pumpkin-400 text-2xl mb-1 animate-bounce">
+          🎃
+        </div>
+        <h2 class="text-lg font-bold text-white tracking-tight">당신의 이름을 선택하세요</h2>
+        <p class="text-xs text-gray-400">배정된 역할지에는 극비 미션과 비밀이 담겨 있습니다.</p>
+      </div>
+
+      <!-- PLAYER LIST -->
+      <div class="space-y-2" id="modal-player-list">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- COSTUME INPUT -->
+      <div class="pt-2 border-t border-gray-800 space-y-2">
+        <label class="block text-xs font-semibold text-pumpkin-400 flex items-center gap-1.5">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>오늘 입고 온 할로윈 코스튬은?</span>
+        </label>
+        <input type="text" id="input-costume" placeholder="예: 스파이더맨, 해리포터, 삐에로, 공룡잠옷..." 
+               class="w-full bg-gothic-900 border border-gray-700 focus:border-pumpkin-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 outline-none transition-all">
+        <p class="text-[10px] text-gray-400">입력한 코스튬은 다른 친구들의 프로필과 단서에 실시간 반영됩니다.</p>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button onclick="confirmRoleSelection()" class="flex-1 bg-gradient-to-r from-pumpkin-600 to-pumpkin-500 hover:from-pumpkin-500 hover:to-pumpkin-400 text-white font-bold py-2.5 rounded-xl text-sm transition-all shadow-lg shadow-pumpkin-500/20">
+          내 역할 확인하고 시작하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLUE DETAIL MODAL -->
+  <div id="clue-detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="card-glass-red rounded-2xl max-w-md w-full p-5 border border-crimson-500/50 shadow-2xl space-y-3 max-h-[85vh] overflow-y-auto">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl text-crimson-500" id="modal-clue-icon">🔍</span>
+          <div>
+            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider" id="modal-clue-location">장소</span>
+            <h3 class="text-base font-bold text-white" id="modal-clue-title">단서 명</h3>
+          </div>
+        </div>
+        <button onclick="closeClueModal()" class="w-7 h-7 rounded-full bg-gothic-800 flex items-center justify-center text-gray-400 hover:text-white text-xs">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-3 bg-gothic-900/80 rounded-xl border border-gray-800 space-y-2">
+        <p class="text-xs text-gray-200 leading-relaxed whitespace-pre-line" id="modal-clue-desc"></p>
+      </div>
+
+      <div class="p-3 bg-crimson-900/20 rounded-xl border border-crimson-500/30">
+        <div class="flex items-center space-x-1.5 text-crimson-400 text-xs font-bold mb-1">
+          <i class="fa-solid fa-lightbulb"></i>
+          <span>수사 힌트 / 추리 분석</span>
+        </div>
+        <p class="text-[11px] text-gray-300 leading-normal" id="modal-clue-hint"></p>
+      </div>
+
+      <button onclick="closeClueModal()" class="w-full bg-gothic-800 hover:bg-gothic-700 text-gray-200 font-semibold py-2 rounded-xl text-xs transition-all border border-gray-700">
+        닫기
+      </button>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Global State
+    let GAME_DATA = null;
+    let currentUser = null; // Character ID
+    let currentTab = 'role'; // 'role', 'story', 'clues', 'players', 'vote'
+    let currentStage = 0; // 0 to 5
+    let userCostumes = {}; // { char_id: '드라큘라' }
+    let votes = {}; // { voter_id: target_id }
+    let timerSeconds = 3600; // 60 minutes
+    let timerInterval = null;
+    let isTimerRunning = false;
+    let audioCtx = null;
+    let isAudioPlaying = false;
+
+    // Load Scenario Data
+    async function initApp() {
+      try {
+        const response = await fetch('scenario.json');
+        GAME_DATA = await response.json();
+        
+        // Restore local storage if exists
+        loadLocalStorage();
+
+        // Render initial UI
+        renderHeader();
+        if (!currentUser) {
+          openSelectRoleModal();
+        } else {
+          renderCurrentTab();
+        }
+      } catch (err) {
+        console.error('Failed to load scenario data:', err);
+      }
+    }
+
+    function loadLocalStorage() {
+      const savedUser = localStorage.getItem('mystery_user');
+      if (savedUser) currentUser = savedUser;
+
+      const savedCostumes = localStorage.getItem('mystery_costumes');
+      if (savedCostumes) userCostumes = JSON.parse(savedCostumes);
+
+      const savedStage = localStorage.getItem('mystery_stage');
+      if (savedStage !== null) currentStage = parseInt(savedStage, 10);
+
+      const savedVotes = localStorage.getItem('mystery_votes');
+      if (savedVotes) votes = JSON.parse(savedVotes);
+    }
+
+    function saveLocalStorage() {
+      if (currentUser) localStorage.setItem('mystery_user', currentUser);
+      localStorage.setItem('mystery_costumes', JSON.stringify(userCostumes));
+      localStorage.setItem('mystery_stage', currentStage.toString());
+      localStorage.setItem('mystery_votes', JSON.stringify(votes));
+    }
+
+    // Role Selection Modal
+    function openSelectRoleModal() {
+      const container = document.getElementById('modal-player-list');
+      container.innerHTML = '';
+
+      GAME_DATA.characters.forEach(char => {
+        const isSelected = currentUser === char.id;
+        const costume = userCostumes[char.id] || '코스튬 미입력';
+
+        const btn = document.createElement('div');
+        btn.className = `p-3 rounded-xl border cursor-pointer transition-all flex items-center justify-between ${
+          isSelected 
+            ? 'bg-pumpkin-500/20 border-pumpkin-500 text-white' 
+            : 'bg-gothic-900/60 border-gray-800 text-gray-300 hover:border-gray-700'
+        }`;
+        btn.onclick = () => selectTempRole(char.id);
+        btn.id = `modal-btn-${char.id}`;
+
+        btn.innerHTML = `
+          <div class="flex items-center space-x-2.5">
+            <div class="w-8 h-8 rounded-full bg-gothic-800 border border-pumpkin-500/30 flex items-center justify-center text-xs font-bold text-pumpkin-400">
+              ${char.real_name.charAt(0)}
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                <span>${char.real_name}</span>
+                <span class="text-[10px] text-gray-400">(${char.birth_year})</span>
+              </div>
+              <div class="text-[10px] text-pumpkin-400/90">${char.character_name} · ${char.role_title}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[9px] px-2 py-0.5 rounded-full bg-gothic-800 border border-gray-700 text-gray-300">
+              🎭 ${costume}
+            </span>
+          </div>
+        `;
+        container.appendChild(btn);
+      });
+
+      if (currentUser && userCostumes[currentUser]) {
+        document.getElementById('input-costume').value = userCostumes[currentUser];
+      }
+
+      document.getElementById('role-select-modal').classList.remove('hidden');
+    }
+
+    let tempSelectedRole = null;
+    function selectTempRole(charId) {
+      tempSelectedRole = charId;
+      document.querySelectorAll('#modal-player-list > div').forEach(el => {
+        el.className = el.className.replace('bg-pumpkin-500/20 border-pumpkin-500 text-white', 'bg-gothic-900/60 border-gray-800 text-gray-300');
+      });
+      const selectedEl = document.getElementById(`modal-btn-${charId}`);
+      if (selectedEl) {
+        selectedEl.className = selectedEl.className.replace('bg-gothic-900/60 border-gray-800 text-gray-300', 'bg-pumpkin-500/20 border-pumpkin-500 text-white');
+      }
+      if (userCostumes[charId]) {
+        document.getElementById('input-costume').value = userCostumes[charId];
+      }
+    }
+
+    function confirmRoleSelection() {
+      if (!tempSelectedRole && !currentUser) {
+        alert('역할을 선택해 주세요!');
+        return;
+      }
+      if (tempSelectedRole) {
+        currentUser = tempSelectedRole;
+      }
+
+      const costumeInput = document.getElementById('input-costume').value.trim();
+      if (costumeInput) {
+        userCostumes[currentUser] = costumeInput;
+      } else if (!userCostumes[currentUser]) {
+        userCostumes[currentUser] = '할로윈 분장';
+      }
+
+      saveLocalStorage();
+      document.getElementById('role-select-modal').classList.add('hidden');
+      renderHeader();
+      renderCurrentTab();
+    }
+
+    function renderHeader() {
+      if (!currentUser || !GAME_DATA) return;
+      const char = GAME_DATA.characters.find(c => c.id === currentUser);
+      if (char) {
+        const costume = userCostumes[char.id] ? `(${userCostumes[char.id]})` : '';
+        document.getElementById('current-user-badge').innerHTML = `
+          <span class="text-pumpkin-400 font-bold">${char.real_name}</span> 
+          <span class="text-gray-400">${char.character_name.split(' ')[1] || ''} ${costume}</span>
+        `;
+      }
+      updateClueBadgeCount();
+      updateStageTabStyles();
+    }
+
+    function updateClueBadgeCount() {
+      if (!GAME_DATA) return;
+      // Filter clues available up to currentStage
+      const availableClues = GAME_DATA.clues.filter(c => {
+        if (currentStage >= 3) return true; // all clues in stage 3+
+        if (currentStage === 2) return c.stage === 1; // stage 1 clues
+        return false;
+      });
+      document.getElementById('clue-badge-count').innerText = availableClues.length;
+    }
+
+    function updateStageTabStyles() {
+      document.querySelectorAll('.stage-tab').forEach(tab => {
+        const stageNum = parseInt(tab.dataset.stage, 10);
+        if (stageNum === currentStage) {
+          tab.className = 'stage-tab px-2.5 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40';
+        } else {
+          tab.className = 'stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200';
+        }
+      });
+    }
+
+    function changeStage(newStage) {
+      currentStage = newStage;
+      saveLocalStorage();
+      updateStageTabStyles();
+      updateClueBadgeCount();
+      renderCurrentTab();
+    }
+
+    function setTab(tabName) {
+      currentTab = tabName;
+      // Update nav buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300';
+      });
+      const activeBtn = document.getElementById(`nav-btn-${tabName}`);
+      if (activeBtn) {
+        activeBtn.className = 'nav-btn flex flex-col items-center justify-center text-pumpkin-400';
+      }
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      const container = document.getElementById('app-viewport');
+      container.innerHTML = '';
+
+      switch (currentTab) {
+        case 'role':
+          renderRoleTab(container);
+          break;
+        case 'story':
+          renderStoryTab(container);
+          break;
+        case 'clues':
+          renderCluesTab(container);
+          break;
+        case 'players':
+          renderPlayersTab(container);
+          break;
+        case 'vote':
+          renderVoteTab(container);
+          break;
+      }
+    }
+
+    // 1. ROLE TAB
+    function renderRoleTab(container) {
+      if (!currentUser) return;
+      const char = GAME_DATA.characters.find(c => c.id === currentUser);
+      const costume = userCostumes[char.id] || '자유 코스튬';
+
+      const isCulprit = char.is_culprit;
+
+      const card = document.createElement('div');
+      card.className = 'space-y-4';
+      card.innerHTML = `
+        <!-- TOP ID CARD -->
+        <div class="card-glass rounded-2xl p-4 border ${isCulprit ? 'border-crimson-500/50 shadow-crimson-600/20' : 'border-pumpkin-500/30'} shadow-xl relative overflow-hidden">
+          ${isCulprit ? `
+            <div class="absolute -right-12 top-4 bg-crimson-600 text-white text-[10px] font-extrabold uppercase px-12 py-1 rotate-45 shadow">
+              진범 (CULPRIT)
+            </div>
+          ` : ''}
+
+          <div class="flex items-center space-x-3 mb-3">
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pumpkin-500 to-crimson-600 flex items-center justify-center text-xl font-bold text-white shadow-lg">
+              ${char.real_name.charAt(0)}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="text-base font-bold text-white tracking-tight">${char.real_name}</h2>
+                <span class="text-xs text-gray-400">${char.birth_year}</span>
+              </div>
+              <p class="text-xs font-semibold text-pumpkin-400">${char.character_name} · ${char.role_title}</p>
+            </div>
+          </div>
+
+          <div class="bg-gothic-900/80 rounded-xl p-3 border border-gray-800 space-y-1.5 text-xs">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-400">오늘의 코스튬:</span>
+              <span class="text-white font-bold bg-pumpkin-500/20 px-2 py-0.5 rounded border border-pumpkin-500/30">
+                🎭 ${costume}
+              </span>
+            </div>
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-gray-400 shrink-0">성격 & 연기 팁:</span>
+              <span class="text-gray-200 text-right font-medium">${char.personality}</span>
+            </div>
+            <div class="flex items-start justify-between gap-2">
+              <span class="text-gray-400 shrink-0">피해자와의 관계:</span>
+              <span class="text-gray-200 text-right">${char.relationship}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PUBLIC ALIBI -->
+        <div class="card-glass rounded-2xl p-4 border border-gray-800 space-y-2">
+          <div class="flex items-center space-x-2 text-xs font-bold text-gray-300">
+            <i class="fa-solid fa-bullhorn text-pumpkin-400"></i>
+            <span>모두에게 공개할 나의 1차 알리바이</span>
+          </div>
+          <div class="p-3 bg-gothic-900/60 rounded-xl border border-gray-800 text-xs text-gray-200 leading-relaxed">
+            "${char.alibi}"
+          </div>
+        </div>
+
+        <!-- SECRET & MOTIVE -->
+        <div class="card-glass-red rounded-2xl p-4 border border-crimson-500/40 space-y-2 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-bold text-crimson-400">
+              <i class="fa-solid fa-lock"></i>
+              <span>절대 들키면 안 되는 극비 비밀 (SECRET)</span>
+            </div>
+            <span class="text-[10px] bg-crimson-600/30 text-crimson-300 px-2 py-0.5 rounded border border-crimson-500/40 font-bold">비공개</span>
+          </div>
+          <div class="p-3 bg-black/40 rounded-xl border border-crimson-500/20 text-xs text-red-100 leading-relaxed whitespace-pre-line">
+${char.secret}
+          </div>
+        </div>
+
+        <!-- SECRET MISSIONS -->
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-2">
+          <div class="flex items-center space-x-2 text-xs font-bold text-pumpkin-400">
+            <i class="fa-solid fa-crosshairs"></i>
+            <span>오늘 밤 나의 비밀 개인 미션</span>
+          </div>
+          <div class="p-3 bg-gothic-900/70 rounded-xl border border-gray-800 text-xs text-gray-200 leading-relaxed whitespace-pre-line">
+${char.mission}
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    // 2. STORY TAB
+    function renderStoryTab(container) {
+      const story = GAME_DATA.story;
+      const victim = GAME_DATA.meta.victim;
+
+      const card = document.createElement('div');
+      card.className = 'space-y-4';
+      card.innerHTML = `
+        <!-- VICTIM DOSSIER -->
+        <div class="card-glass rounded-2xl p-4 border border-crimson-500/40 relative overflow-hidden">
+          <div class="flex items-center space-x-3 mb-2">
+            <div class="w-12 h-12 rounded-2xl bg-crimson-900/80 border border-crimson-500 flex items-center justify-center text-xl text-crimson-400 shadow-lg">
+              💀
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-base font-bold text-white">[사망] ${victim.name}</h3>
+                <span class="text-xs text-gray-400">(${victim.age}세, ${victim.gender})</span>
+              </div>
+              <p class="text-xs text-crimson-400 font-semibold">${victim.role}</p>
+            </div>
+          </div>
+          <p class="text-xs text-gray-300 leading-relaxed bg-gothic-900/60 p-3 rounded-xl border border-gray-800">
+            ${victim.description}
+          </p>
+          <div class="mt-2.5 flex items-center justify-between text-[11px] text-gray-400 px-1">
+            <span>사망 시각: <strong class="text-white">${story.incident_time}</strong></span>
+            <span>사인: <strong class="text-crimson-400">${story.cause_of_death}</strong></span>
+          </div>
+        </div>
+
+        <!-- SCENE BLUEPRINT / MAP -->
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-2">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-pumpkin-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-map-location-dot"></i>
+              <span>루프탑 파티룸 '루나 하우스' 현장 배치도</span>
+            </h4>
+            <span class="text-[10px] text-gray-400">클릭하여 단서 확인</span>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
+              <div class="font-bold text-crimson-400 flex items-center gap-1 mb-1">
+                <span>🛋️ VIP 휴게실 소파</span>
+                <span class="text-[9px] bg-crimson-500/20 px-1 rounded">시신</span>
+              </div>
+              <p class="text-[10px] text-gray-400">서준이 엎드려 쓰러진 소파와 바닥</p>
+            </div>
+
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
+              <div class="font-bold text-pumpkin-400 flex items-center gap-1 mb-1">
+                <span>🍸 바 카운터</span>
+              </div>
+              <p class="text-[10px] text-gray-400">붉은 칵테일 잔과 얼음통</p>
+            </div>
+
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
+              <div class="font-bold text-purple-400 flex items-center gap-1 mb-1">
+                <span>🌙 야외 테라스</span>
+              </div>
+              <p class="text-[10px] text-gray-400">재떨이와 담배꽁초, 의문의 가루</p>
+            </div>
+
+            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
+              <div class="font-bold text-yellow-400 flex items-center gap-1 mb-1">
+                <span>🎃 메인 바 & 테이블</span>
+              </div>
+              <p class="text-[10px] text-gray-400">마녀 솥 칵테일과 할로윈 데코 소품</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="card-glass rounded-2xl p-4 border border-gray-800 space-y-3">
+          <div class="flex items-center space-x-2 text-xs font-bold text-white">
+            <i class="fa-solid fa-timeline text-pumpkin-500"></i>
+            <span>오늘 밤 사건 타임라인 (21:30 ~ 22:50)</span>
+          </div>
+
+          <div class="space-y-2 border-l border-pumpkin-500/30 pl-3 ml-2 text-xs">
+            ${GAME_DATA.timeline.map(t => `
+              <div class="relative group">
+                <div class="absolute -left-[19px] top-1.5 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900"></div>
+                <div class="font-mono text-[11px] text-pumpkin-400 font-bold">${t.time}</div>
+                <p class="text-gray-300 text-[11px] mt-0.5 leading-snug">${t.event}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    // 3. CLUES TAB
+    function renderCluesTab(container) {
+      const card = document.createElement('div');
+      card.className = 'space-y-4';
+
+      // Stage check
+      const stage1Clues = GAME_DATA.clues.filter(c => c.stage === 1);
+      const stage2Clues = GAME_DATA.clues.filter(c => c.stage === 2);
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-magnifying-glass text-pumpkin-500"></i>
+              <span>단서 보관소</span>
+            </h3>
+            <p class="text-[10px] text-gray-400">현장에서 발견된 단서를 꼼꼼히 조사하세요.</p>
+          </div>
+          <div class="text-xs">
+            ${currentStage < 2 ? `
+              <span class="bg-gray-800 text-gray-400 px-2 py-0.5 rounded text-[10px] border border-gray-700">단서 탐색 전</span>
+            ` : currentStage === 2 ? `
+              <span class="bg-pumpkin-500/20 text-pumpkin-400 px-2 py-0.5 rounded text-[10px] border border-pumpkin-500/30 font-bold">1차 단서 공개</span>
+            ` : `
+              <span class="bg-crimson-600/20 text-crimson-400 px-2 py-0.5 rounded text-[10px] border border-crimson-500/30 font-bold">전체 단서 해금됨</span>
+            `}
+          </div>
+        </div>
+
+        ${currentStage < 2 ? `
+          <div class="card-glass rounded-2xl p-6 text-center space-y-3 border border-gray-800">
+            <div class="text-3xl text-gray-600 animate-pulse">🔒</div>
+            <h4 class="text-sm font-bold text-gray-300">1차 단서가 아직 봉인되어 있습니다</h4>
+            <p class="text-xs text-gray-400 max-w-xs mx-auto">
+              상단 탭에서 <strong class="text-pumpkin-400">"2. 1차 단서수색"</strong> 단계를 선택하면 1차 현장 단서가 모두 오픈됩니다!
+            </p>
+            <button onclick="changeStage(2)" class="bg-pumpkin-500 hover:bg-pumpkin-400 text-white font-bold px-4 py-2 rounded-xl text-xs transition-all shadow-lg">
+              1차 단서 수색 시작하기
+            </button>
+          </div>
+        ` : ''}
+
+        <!-- STAGE 1 CLUES -->
+        ${currentStage >= 2 ? `
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+              <span>1차 현장 수색 단서 (총 8개)</span>
+            </h4>
+            <div class="grid grid-cols-1 gap-2">
+              ${stage1Clues.map(clue => `
+                <div onclick="openClueModal('${clue.id}')" class="card-glass rounded-xl p-3 border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all flex items-center justify-between group">
+                  <div class="flex items-center space-x-3">
+                    <div class="w-9 h-9 rounded-xl bg-gothic-900 border border-pumpkin-500/30 flex items-center justify-center text-pumpkin-400 group-hover:scale-110 transition-transform">
+                      <i class="fa-solid fa-file-lines text-sm"></i>
+                    </div>
+                    <div>
+                      <span class="text-[9px] font-mono text-pumpkin-400/90">${clue.location}</span>
+                      <h5 class="text-xs font-bold text-white group-hover:text-pumpkin-400 transition-colors">${clue.title}</h5>
+                    </div>
+                  </div>
+                  <i class="fa-solid fa-chevron-right text-gray-600 text-xs group-hover:text-pumpkin-400 transition-colors"></i>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
+        <!-- STAGE 2 CLUES -->
+        ${currentStage >= 2 ? `
+          <div class="space-y-2 pt-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-xs font-bold text-crimson-400 uppercase tracking-wider flex items-center gap-1">
+                <i class="fa-solid fa-skull"></i>
+                <span>2차 심층 & 국과수 단서 (총 6개)</span>
+              </h4>
+              ${currentStage < 3 ? `
+                <button onclick="changeStage(3)" class="text-[10px] bg-crimson-600/30 text-crimson-300 px-2 py-0.5 rounded border border-crimson-500/40 hover:bg-crimson-600 font-bold">
+                  지금 해금하기
+                </button>
+              ` : ''}
+            </div>
+
+            ${currentStage < 3 ? `
+              <div class="card-glass-red rounded-xl p-4 text-center border border-crimson-500/30 space-y-2">
+                <p class="text-xs text-crimson-300 font-semibold">심층 수색 및 국과수 부검 결과가 봉인 중입니다.</p>
+                <p class="text-[10px] text-gray-400">1차 브리핑 후 상단의 "3. 2차 심층수색" 단계를 누르면 결정적 증거가 해금됩니다.</p>
+              </div>
+            ` : `
+              <div class="grid grid-cols-1 gap-2">
+                ${stage2Clues.map(clue => `
+                  <div onclick="openClueModal('${clue.id}')" class="card-glass-red rounded-xl p-3 border border-crimson-500/40 hover:border-crimson-500 cursor-pointer transition-all flex items-center justify-between group shadow-md shadow-crimson-900/10">
+                    <div class="flex items-center space-x-3">
+                      <div class="w-9 h-9 rounded-xl bg-crimson-900/40 border border-crimson-500/50 flex items-center justify-center text-crimson-400 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-triangle-exclamation text-sm"></i>
+                      </div>
+                      <div>
+                        <span class="text-[9px] font-mono text-crimson-400 font-bold">${clue.location}</span>
+                        <h5 class="text-xs font-bold text-white group-hover:text-crimson-400 transition-colors">${clue.title}</h5>
+                      </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-gray-600 text-xs group-hover:text-crimson-400 transition-colors"></i>
+                  </div>
+                `).join('')}
+              </div>
+            `}
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(card);
+    }
+
+    function openClueModal(clueId) {
+      const clue = GAME_DATA.clues.find(c => c.id === clueId);
+      if (!clue) return;
+
+      document.getElementById('modal-clue-location').innerText = clue.location;
+      document.getElementById('modal-clue-title').innerText = clue.title;
+      document.getElementById('modal-clue-desc').innerText = clue.description;
+      document.getElementById('modal-clue-hint').innerText = clue.hint;
+
+      document.getElementById('clue-detail-modal').classList.remove('hidden');
+    }
+
+    function closeClueModal() {
+      document.getElementById('clue-detail-modal').classList.add('hidden');
+    }
+
+    // 4. PLAYERS TAB
+    function renderPlayersTab(container) {
+      const card = document.createElement('div');
+      card.className = 'space-y-3';
+
+      card.innerHTML = `
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <i class="fa-solid fa-masks-theater text-pumpkin-500"></i>
+              <span>용의자 7인 프로필 & 코스튬</span>
+            </h3>
+            <p class="text-[10px] text-gray-400">서로의 표정과 알리바이를 관찰하세요.</p>
+          </div>
+          <button onclick="openSelectRoleModal()" class="text-[10px] text-pumpkin-400 border border-pumpkin-500/30 px-2 py-0.5 rounded-full hover:bg-pumpkin-500/10">
+            코스튬 수정
+          </button>
+        </div>
+
+        <div class="space-y-2.5">
+          ${GAME_DATA.characters.map(char => {
+            const isMe = char.id === currentUser;
+            const costume = userCostumes[char.id] || '코스튬 미입력';
+
+            return `
+              <div class="card-glass rounded-2xl p-3.5 border ${isMe ? 'border-pumpkin-500 shadow-md shadow-pumpkin-500/10' : 'border-gray-800'} space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2.5">
+                    <div class="w-9 h-9 rounded-xl ${isMe ? 'bg-pumpkin-500 text-white' : 'bg-gothic-900 border border-gray-700 text-gray-300'} flex items-center justify-center text-xs font-bold">
+                      ${char.real_name.charAt(0)}
+                    </div>
+                    <div>
+                      <div class="flex items-center gap-1.5">
+                        <span class="text-xs font-bold text-white">${char.real_name}</span>
+                        <span class="text-[10px] text-gray-400">${char.birth_year}</span>
+                        ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1.5 py-0.2 rounded border border-pumpkin-500/30">나</span>' : ''}
+                      </div>
+                      <p class="text-[10px] text-pumpkin-400/90 font-medium">${char.character_name} · ${char.role_title}</p>
+                    </div>
+                  </div>
+
+                  <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gothic-900 border border-pumpkin-500/30 text-pumpkin-300 shadow-inner">
+                    🎭 ${costume}
+                  </span>
+                </div>
+
+                <div class="text-[11px] text-gray-300 bg-gothic-900/60 p-2.5 rounded-xl border border-gray-800/80 space-y-1">
+                  <div><strong class="text-gray-400">공개 신분:</strong> ${char.public_info}</div>
+                  <div><strong class="text-gray-400">공개 알리바이:</strong> "${char.alibi}"</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    // 5. VOTE & EPILOGUE TAB
+    function renderVoteTab(container) {
+      const card = document.createElement('div');
+      card.className = 'space-y-4';
+
+      const myVote = votes[currentUser] || null;
+
+      card.innerHTML = `
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/40 text-center space-y-2">
+          <div class="text-3xl text-pumpkin-500">🗳️</div>
+          <h3 class="text-sm font-bold text-white">최종 범인 비밀 투표</h3>
+          <p class="text-xs text-gray-300">
+            모든 단서와 알리바이를 종합하여, 박서준을 독살한 <strong class="text-crimson-400">진범 1명</strong>을 지목하세요.
+          </p>
+        </div>
+
+        <!-- CANDIDATES -->
+        <div class="space-y-2">
+          ${GAME_DATA.characters.map(char => {
+            const isMe = char.id === currentUser;
+            const isSelected = myVote === char.id;
+            const costume = userCostumes[char.id] || '코스튬';
+
+            return `
+              <div onclick="submitVote('${char.id}')" 
+                   class="card-glass rounded-xl p-3 border transition-all cursor-pointer flex items-center justify-between ${
+                     isSelected 
+                       ? 'border-crimson-500 bg-crimson-900/30 shadow-md shadow-crimson-600/20' 
+                       : 'border-gray-800 hover:border-gray-700'
+                   }">
+                <div class="flex items-center space-x-3">
+                  <div class="w-8 h-8 rounded-lg ${isSelected ? 'bg-crimson-600 text-white' : 'bg-gothic-900 text-gray-400'} flex items-center justify-center text-xs font-bold">
+                    ${isSelected ? '✓' : char.real_name.charAt(0)}
+                  </div>
+                  <div>
+                    <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                      <span>${char.real_name}</span>
+                      <span class="text-[10px] text-gray-400">(${costume})</span>
+                      ${isMe ? '<span class="text-[9px] text-gray-500">(나)</span>' : ''}
+                    </div>
+                    <p class="text-[10px] text-pumpkin-400/90">${char.character_name}</p>
+                  </div>
+                </div>
+                <div>
+                  ${isSelected ? `
+                    <span class="text-[10px] font-bold text-crimson-400 bg-crimson-900/40 px-2 py-0.5 rounded border border-crimson-500/50">
+                      내 지목 대상
+                    </span>
+                  ` : `
+                    <span class="text-[10px] text-gray-500 group-hover:text-gray-300">지목하기</span>
+                  `}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- STAGE 5 EPILOGUE (진범 공개 버튼) -->
+        <div class="pt-4 border-t border-gray-800">
+          ${currentStage >= 5 ? `
+            <div class="card-glass-red rounded-2xl p-4 border border-crimson-500 space-y-3 shadow-2xl animate-fade-in">
+              <div class="flex items-center space-x-2 text-crimson-400 font-bold text-sm">
+                <i class="fa-solid fa-skull"></i>
+                <span>[진범 공개] 사건의 전말 해설</span>
+              </div>
+
+              <div class="p-3 bg-black/60 rounded-xl border border-crimson-500/30 space-y-2 text-xs">
+                <div class="text-pumpkin-400 font-bold text-sm">
+                  진범: ${GAME_DATA.epilogue.culprit_name}
+                </div>
+                <p class="text-gray-200 leading-relaxed whitespace-pre-line">
+${GAME_DATA.epilogue.full_truth}
+                </p>
+              </div>
+
+              <div class="p-3 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-1 text-xs">
+                <div class="text-white font-bold text-[11px] flex items-center gap-1">
+                  <i class="fa-solid fa-clapperboard text-pumpkin-500"></i>
+                  <span>사건 이후 비하인드 스토리</span>
+                </div>
+                <p class="text-gray-300 text-[11px] leading-relaxed">
+                  ${GAME_DATA.epilogue.after_story}
+                </p>
+              </div>
+            </div>
+          ` : `
+            <div class="text-center space-y-2">
+              <p class="text-[11px] text-gray-400">모두 투표를 마쳤다면 상단 탭에서 <strong class="text-pumpkin-400">"5. 진범공개"</strong>를 누르거나 아래 버튼을 누르세요.</p>
+              <button onclick="changeStage(5)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-lg shadow-crimson-600/30">
+                🚨 전원 투표 완료! 진범 & 전말 공개하기
+              </button>
+            </div>
+          `}
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    function submitVote(targetCharId) {
+      if (!currentUser) return;
+      votes[currentUser] = targetCharId;
+      saveLocalStorage();
+      renderVoteTab(document.getElementById('app-viewport'));
+    }
+
+    // 60-Minute Countdown Timer
+    function toggleTimer() {
+      if (isTimerRunning) {
+        clearInterval(timerInterval);
+        isTimerRunning = false;
+        document.getElementById('timer-display').classList.remove('text-crimson-400');
+      } else {
+        isTimerRunning = true;
+        document.getElementById('timer-display').classList.add('text-crimson-400');
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            alert('⏰ 60분이 종료되었습니다! 최종 투표를 진행하세요!');
+          }
+        }, 1000);
+      }
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timer-display').innerText = 
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    // Audio / BGM Synthesizer (Spooky Ambient Synth using Web Audio API)
+    function toggleAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const icon = document.getElementById('bgm-icon');
+
+      if (isAudioPlaying) {
+        if (window.bgmOsc) {
+          window.bgmOsc.stop();
+          window.bgmOsc.disconnect();
+        }
+        isAudioPlaying = false;
+        icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+      } else {
+        playSpookyTone();
+        isAudioPlaying = true;
+        icon.className = 'fa-solid fa-volume-high text-pumpkin-400 animate-pulse';
+      }
+    }
+
+    function playSpookyTone() {
+      if (!audioCtx) return;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(65.41, audioCtx.currentTime); // Low C2
+      
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+
+      // Low pass filter
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start();
+      window.bgmOsc = osc;
+    }
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
