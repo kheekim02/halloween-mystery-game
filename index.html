@@ -78,21 +78,21 @@
 
   <!-- TOP BAR -->
   <header class="sticky top-0 z-50 bg-gothic-900/95 backdrop-blur-md border-b border-pumpkin-500/20 px-4 py-2.5 flex items-center justify-between shadow-lg">
-    <div class="flex items-center space-x-2">
+    <div class="flex items-center space-x-2.5">
       <span class="text-2xl animate-pulse">🎃</span>
       <div>
-        <h1 class="text-sm font-bold tracking-tight text-white">
+        <h1 class="text-base font-bold tracking-tight text-white">
           <span>붉은 호박의 밤</span>
         </h1>
-        <p class="text-[10px] text-gray-400" id="current-user-badge">플레이어를 선택하세요</p>
+        <p class="text-xs text-gray-300 font-medium" id="current-user-badge">플레이어를 선택하세요</p>
       </div>
     </div>
     
     <div class="flex items-center space-x-2">
       <!-- 60m TIMER BADGE -->
-      <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex items-center space-x-1.5 bg-gothic-800 border border-pumpkin-500/40 hover:border-pumpkin-500 px-2.5 py-1 rounded-full text-xs font-mono text-pumpkin-400 shadow-inner group transition-all" title="클릭하여 타이머 시작/일시정지">
-        <span id="timer-icon" class="text-[9px] text-pumpkin-500">▶</span>
-        <span id="timer-display" class="font-bold">60:00</span>
+      <button id="timer-toggle-btn" onclick="toggleTimer()" class="flex items-center space-x-1.5 bg-gothic-800 border border-pumpkin-500/40 hover:border-pumpkin-500 px-3 py-1.5 rounded-full text-xs font-mono text-pumpkin-400 shadow-inner group transition-all" title="클릭하여 타이머 시작/일시정지">
+        <span id="timer-icon" class="text-xs text-pumpkin-500">▶</span>
+        <span id="timer-display" class="font-bold text-xs">60:00</span>
       </button>
 
       <!-- BGM SOUND TOGGLE -->
@@ -108,18 +108,18 @@
   </header>
 
   <!-- STAGE PROGRESS BAR -->
-  <div class="bg-gothic-800/90 px-3 py-1.5 border-b border-gray-800 flex items-center gap-2 overflow-x-auto text-[11px] no-scrollbar">
-    <div class="flex items-center gap-1 text-[10px] text-gray-400 font-bold shrink-0 pl-1">
+  <div class="bg-gothic-800/90 px-3 py-2 border-b border-gray-800 flex items-center gap-2 overflow-x-auto text-xs no-scrollbar">
+    <div class="flex items-center gap-1 text-xs text-gray-400 font-bold shrink-0 pl-1">
       <i class="fa-solid fa-flag-checkered text-pumpkin-500"></i>
       <span>진행:</span>
     </div>
     <div class="flex items-center space-x-1.5 min-w-max" id="stage-tabs-container">
-      <button onclick="changeStage(0)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40" data-stage="0">0. 사건발생</button>
-      <button onclick="changeStage(1)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="1">1. 참가자&코스튬</button>
-      <button onclick="changeStage(2)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="2">2. 1차 단서수색</button>
-      <button onclick="changeStage(3)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="3">3. 2차 심층수색</button>
-      <button onclick="changeStage(4)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="4">4. 비밀투표</button>
-      <button onclick="changeStage(5)" class="stage-tab px-2.5 py-0.5 rounded-full transition-all text-gray-400 hover:text-gray-200" data-stage="5">5. 진범공개</button>
+      <button onclick="changeStage(0)" class="stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs" data-stage="0">0. 사건발생</button>
+      <button onclick="changeStage(1)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="1">1. 참가자&코스튬</button>
+      <button onclick="changeStage(2)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="2">2. 1차 단서수색</button>
+      <button onclick="changeStage(3)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="3">3. 2차 심층수색</button>
+      <button onclick="changeStage(4)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="4">4. 비밀투표</button>
+      <button onclick="changeStage(5)" class="stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs" data-stage="5">5. 진범공개</button>
     </div>
   </div>
 
@@ -132,24 +132,24 @@
   <nav class="fixed bottom-0 left-0 right-0 z-40 bg-gothic-900/95 backdrop-blur-lg border-t border-gray-800 max-w-xl mx-auto px-4 py-2 flex items-center justify-around shadow-2xl">
     <button onclick="setTab('role')" id="nav-btn-role" class="nav-btn flex flex-col items-center justify-center text-pumpkin-400">
       <i class="fa-solid fa-id-card-clip text-lg mb-0.5"></i>
-      <span class="text-[10px] font-semibold">내 비밀역할</span>
+      <span class="text-xs font-bold">내 비밀역할</span>
     </button>
-    <button onclick="setTab('story')" id="nav-btn-story" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+    <button onclick="setTab('story')" id="nav-btn-story" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-book-skull text-lg mb-0.5"></i>
-      <span class="text-[10px] font-semibold">사건현장</span>
+      <span class="text-xs font-bold">사건현장</span>
     </button>
-    <button onclick="setTab('clues')" id="nav-btn-clues" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300 relative">
+    <button onclick="setTab('clues')" id="nav-btn-clues" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200 relative">
       <i class="fa-solid fa-magnifying-glass text-lg mb-0.5"></i>
-      <span class="text-[10px] font-semibold">단서보관소</span>
-      <span id="clue-badge-count" class="absolute -top-1 -right-2 bg-crimson-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full">0</span>
+      <span class="text-xs font-bold">단서보관소</span>
+      <span id="clue-badge-count" class="absolute -top-1 -right-2 bg-crimson-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">0</span>
     </button>
-    <button onclick="setTab('players')" id="nav-btn-players" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+    <button onclick="setTab('players')" id="nav-btn-players" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-masks-theater text-lg mb-0.5"></i>
-      <span class="text-[10px] font-semibold">용의자7인</span>
+      <span class="text-xs font-bold">용의자7인</span>
     </button>
-    <button onclick="setTab('vote')" id="nav-btn-vote" class="nav-btn flex flex-col items-center justify-center text-gray-500 hover:text-gray-300">
+    <button onclick="setTab('vote')" id="nav-btn-vote" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-check-to-slot text-lg mb-0.5"></i>
-      <span class="text-[10px] font-semibold">지목투표</span>
+      <span class="text-xs font-bold">지목투표</span>
     </button>
   </nav>
 
@@ -189,33 +189,41 @@
   </div>
 
   <!-- CLUE DETAIL MODAL -->
-  <div id="clue-detail-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
-    <div class="card-glass-red rounded-2xl max-w-md w-full p-5 border border-crimson-500/50 shadow-2xl space-y-3 max-h-[85vh] overflow-y-auto">
-      <div class="flex items-start justify-between">
-        <div class="flex items-center space-x-2">
-          <span class="text-xl text-crimson-500" id="modal-clue-icon">🔍</span>
-          <div>
-            <span class="text-[10px] font-mono text-gray-400 uppercase tracking-wider" id="modal-clue-location">장소</span>
-            <h3 class="text-base font-bold text-white" id="modal-clue-title">단서 명</h3>
+  <div id="clue-detail-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="card-glass-red rounded-2xl max-w-md w-full p-5 border border-crimson-500/60 shadow-2xl space-y-3.5 max-h-[90vh] overflow-y-auto">
+      <!-- Modal Header -->
+      <div class="flex items-start justify-between border-b border-gray-800 pb-2.5">
+        <div>
+          <div class="flex items-center gap-1.5 mb-1">
+            <span class="text-xs font-mono font-bold text-pumpkin-400 bg-pumpkin-500/20 px-2 py-0.5 rounded border border-pumpkin-500/30" id="modal-clue-badge">증거물</span>
+            <span class="text-xs font-mono text-gray-400" id="modal-clue-location">장소</span>
           </div>
+          <h3 class="text-lg font-bold text-white tracking-tight" id="modal-clue-title">단서 명</h3>
         </div>
-        <button onclick="closeClueModal()" class="w-7 h-7 rounded-full bg-gothic-800 flex items-center justify-center text-gray-400 hover:text-white text-xs">
+        <button onclick="closeClueModal()" class="w-8 h-8 rounded-full bg-gothic-800 border border-gray-700 flex items-center justify-center text-gray-300 hover:text-white text-sm">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Clue Forensic Image Box -->
-      <div id="modal-clue-img-box" class="w-full rounded-xl overflow-hidden border border-gray-700 bg-black/60 shadow-md">
-        <img id="modal-clue-img" src="" alt="수사 증거물 사진" class="w-full h-auto object-cover max-h-56" />
+      <!-- Pure Visual Evidence Image Box -->
+      <div id="modal-clue-img-box" class="w-full rounded-xl overflow-hidden border-2 border-gray-700/80 bg-black/80 shadow-lg flex items-center justify-center max-h-64">
+        <img id="modal-clue-img" src="" alt="수사 증거물 사진" class="w-full h-auto object-contain max-h-64" />
       </div>
 
-      <div class="p-3 bg-gothic-900/80 rounded-xl border border-gray-800 space-y-2">
-        <p class="text-xs text-gray-200 leading-relaxed whitespace-pre-line" id="modal-clue-desc"></p>
+      <!-- Clear HTML Text Panel -->
+      <div class="p-4 bg-gothic-900/90 rounded-xl border border-gray-800 space-y-2 shadow-inner">
+        <div class="flex items-center justify-between text-xs font-bold text-gray-400 border-b border-gray-800 pb-1">
+          <span class="flex items-center gap-1 text-pumpkin-400">
+            <i class="fa-solid fa-fingerprint"></i>
+            <span>현장 수사관 분석 보고서</span>
+          </span>
+          <span class="text-emerald-400 font-mono">STATUS: VERIFIED</span>
+        </div>
+        <p class="text-sm text-gray-100 leading-relaxed whitespace-pre-line font-medium pt-1" id="modal-clue-desc"></p>
       </div>
 
-
-      <button onclick="closeClueModal()" class="w-full bg-gothic-800 hover:bg-gothic-700 text-gray-200 font-semibold py-2 rounded-xl text-xs transition-all border border-gray-700">
-        닫기
+      <button onclick="closeClueModal()" class="w-full bg-gothic-800 hover:bg-gothic-700 text-white font-bold py-3 rounded-xl text-sm transition-all border border-gray-700 shadow-md">
+        확인 완료 (닫기)
       </button>
     </div>
   </div>
@@ -395,9 +403,9 @@
       document.querySelectorAll('.stage-tab').forEach(tab => {
         const stageNum = parseInt(tab.dataset.stage, 10);
         if (stageNum === currentStage) {
-          tab.className = 'stage-tab px-2.5 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40';
+          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-pumpkin-400 font-bold bg-pumpkin-500/20 border border-pumpkin-500/40 text-xs';
         } else {
-          tab.className = 'stage-tab px-2.5 py-1 rounded-full transition-all text-gray-400 hover:text-gray-200';
+          tab.className = 'stage-tab px-3 py-1 rounded-full transition-all text-gray-300 hover:text-white text-xs';
         }
       });
     }
@@ -510,70 +518,26 @@
 
         <!-- PUBLIC ALIBI -->
         <div class="card-glass rounded-2xl p-4 border border-gray-800 space-y-2">
-          <div class="flex items-center space-x-2 text-xs font-bold text-gray-300">
+          <div class="flex items-center space-x-2 text-sm font-bold text-gray-200">
             <i class="fa-solid fa-bullhorn text-pumpkin-400"></i>
             <span>모두에게 공개할 나의 1차 알리바이</span>
           </div>
-          <div class="p-3 bg-gothic-900/60 rounded-xl border border-gray-800 text-xs text-gray-200 leading-relaxed">
+          <div class="p-3.5 bg-gothic-900/60 rounded-xl border border-gray-800 text-sm text-gray-200 leading-relaxed">
             "${char.alibi}"
           </div>
         </div>
 
         <!-- SECRET & MOTIVE -->
-        <div class="card-glass-red rounded-2xl p-4 border border-crimson-500/40 space-y-2 shadow-lg">
+        <div class="card-glass-red rounded-2xl p-4 border border-crimson-500/40 space-y-2.5 shadow-lg">
           <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-bold text-crimson-400">
+            <div class="flex items-center space-x-2 text-sm font-bold text-crimson-400">
               <i class="fa-solid fa-lock"></i>
               <span>절대 들키면 안 되는 극비 비밀 (SECRET)</span>
             </div>
-            <span class="text-[10px] bg-crimson-600/30 text-crimson-300 px-2 py-0.5 rounded border border-crimson-500/40 font-bold">비공개</span>
+            <span class="text-xs bg-crimson-600/30 text-crimson-300 px-2 py-0.5 rounded border border-crimson-500/40 font-bold">비공개</span>
           </div>
-          <div class="p-3 bg-black/40 rounded-xl border border-crimson-500/20 text-xs text-red-100 leading-relaxed whitespace-pre-line">
+          <div class="p-3.5 bg-black/50 rounded-xl border border-crimson-500/20 text-sm text-red-100 leading-relaxed whitespace-pre-line">
 ${char.secret}
-          </div>
-        </div>
-
-        <!-- ROLEPLAY & PSYCHOLOGICAL WARFARE STRATEGY -->
-        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/40 space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-bold text-pumpkin-400">
-              <i class="fa-solid fa-masks-theater text-sm"></i>
-              <span>오늘 밤 심리전 & 블러핑 공략집</span>
-            </div>
-            <span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-300 px-1.5 py-0.5 rounded border border-pumpkin-500/30">실전 팁</span>
-          </div>
-
-          <!-- ACTING TIP -->
-          <div class="p-3 bg-gothic-900/80 rounded-xl border border-gray-800 space-y-1">
-            <div class="text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-clapperboard text-xs"></i>
-              <span>나만의 롤플레잉 연기 팁</span>
-            </div>
-            <p class="text-xs text-gray-300 leading-snug">
-              ${char.roleplay_guide ? char.roleplay_guide.acting_tip : '당당하고 자연스럽게 행동하세요.'}
-            </p>
-          </div>
-
-          <!-- BLUFF DEFENSE -->
-          <div class="p-3 bg-emerald-950/30 rounded-xl border border-emerald-500/30 space-y-1">
-            <div class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-shield-halved text-xs"></i>
-              <span>약점 방어 & 뻔뻔한 둘러대기 (Bluff)</span>
-            </div>
-            <p class="text-xs text-emerald-100 leading-snug">
-              ${char.roleplay_guide ? char.roleplay_guide.bluff_defense : '의심을 받으면 침착하게 반박하세요.'}
-            </p>
-          </div>
-
-          <!-- ATTACK TARGET -->
-          <div class="p-3 bg-crimson-950/30 rounded-xl border border-crimson-500/30 space-y-1">
-            <div class="text-[11px] font-bold text-crimson-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-crosshairs text-xs"></i>
-              <span>선제 공격 & 의심 질문 퀘스트 (Attack)</span>
-            </div>
-            <p class="text-xs text-crimson-100 leading-snug">
-              ${char.roleplay_guide ? char.roleplay_guide.attack_target : '주변 인물들의 모순을 파헤치세요.'}
-            </p>
           </div>
         </div>
       `;
@@ -614,109 +578,119 @@ ${char.secret}
         <!-- ARCHITECTURAL BLUEPRINT MAP -->
         <div class="card-glass rounded-2xl p-4 border border-cyan-500/40 space-y-3 bg-slate-950/90 shadow-xl">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5 font-mono">
+            <h4 class="text-sm font-bold text-cyan-400 flex items-center gap-1.5 font-mono">
               <i class="fa-solid fa-compass-drafting text-cyan-400"></i>
-              <span>루나 하우스 건축 블루프린트 (터치 시 단서 이동)</span>
+              <span>루나 하우스 건축 블루프린트 (구역 터치 시 단서 이동)</span>
             </h4>
-            <span class="text-[10px] text-cyan-500/80 font-mono">SCALE 1:50</span>
-          </div>
-
-          <!-- Blueprint Graphic Image -->
-          <div class="relative w-full rounded-xl overflow-hidden border border-cyan-500/50 shadow-inner group">
-            <img src="blueprint.png" alt="루나 하우스 한국어 건축 블루프린트" class="w-full h-auto object-cover hover:scale-[1.01] transition-transform duration-300" />
-            <div class="absolute bottom-1 right-2 text-[9px] text-cyan-300 bg-slate-950/80 px-1.5 py-0.5 rounded border border-cyan-500/40 font-mono">
-              ※ 아래 구역을 누르면 해당 구역의 수사 단서로 직행합니다
-            </div>
+            <span class="text-xs text-cyan-500 font-mono">SCALE 1:50</span>
           </div>
 
           <!-- Interactive 2D Blueprint Grid Layout -->
-          <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2 shadow-inner">
-            <div class="text-[10px] text-cyan-400/70 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
-              <span>LEVEL: 8F ROOFTOP</span>
-              <span>GRID REF: LUNA-OCT31</span>
+          <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2.5 shadow-inner">
+            <div class="text-xs text-cyan-400/80 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
+              <span>LEVEL: 8F PENTHOUSE</span>
+              <span>※ 구역 터치 시 관련 단서 즉시 오픈</span>
             </div>
 
             <!-- Top Row: VIP Lounge / Bar / Terrace -->
-            <div class="grid grid-cols-12 gap-1.5">
+            <div class="grid grid-cols-12 gap-2">
               <!-- VIP Lounge (Crime Scene) -->
-              <div onclick="filterCluesByZone('zone_vip')" class="col-span-5 p-2 rounded-lg border-2 border-crimson-500 bg-crimson-950/40 hover:bg-crimson-900/50 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_vip')" class="col-span-5 p-2.5 rounded-xl border-2 border-crimson-500 bg-crimson-950/50 hover:bg-crimson-900/60 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-crimson-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-crimson-300 font-bold bg-crimson-900/80 px-1 rounded">A-01</span>
-                  <span class="text-[8px] text-crimson-400 font-bold animate-pulse">💀 시신</span>
+                  <span class="text-[10px] font-mono text-crimson-300 font-bold bg-crimson-900/90 px-1.5 py-0.5 rounded">A-01</span>
+                  <span class="text-[10px] text-crimson-400 font-bold animate-pulse">💀 시신</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-crimson-300 transition-colors">VIP 휴게실</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">소파 / 칵테일 잔 / 빨대</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-crimson-300 transition-colors">VIP 휴게실</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">소파 / 칵테일 잔 / 빨대</div>
                 </div>
-                <div class="text-[8px] text-crimson-400/90 font-mono border-t border-crimson-500/30 pt-0.5">단서 2건 터치 ➔</div>
+                <div class="text-[10px] text-crimson-400 font-bold font-mono border-t border-crimson-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 2건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
 
               <!-- Bar Counter -->
-              <div onclick="filterCluesByZone('zone_bar')" class="col-span-4 p-2 rounded-lg border-2 border-amber-500/80 bg-amber-950/30 hover:bg-amber-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_bar')" class="col-span-4 p-2.5 rounded-xl border-2 border-amber-500/80 bg-amber-950/40 hover:bg-amber-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-amber-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-amber-300 font-bold bg-amber-900/80 px-1 rounded">B-02</span>
-                  <span class="text-[8px] text-amber-400">🍸 음료</span>
+                  <span class="text-[10px] font-mono text-amber-300 font-bold bg-amber-900/90 px-1.5 py-0.5 rounded">B-02</span>
+                  <span class="text-[10px] text-amber-400">🍸</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">바 카운터</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">마녀솥 / 종이빨대</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-amber-300 transition-colors">바 카운터</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">마녀솥 / 종이빨대</div>
                 </div>
-                <div class="text-[8px] text-amber-400/90 font-mono border-t border-amber-500/30 pt-0.5">단서 2건 터치 ➔</div>
+                <div class="text-[10px] text-amber-400 font-bold font-mono border-t border-amber-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 2건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
 
               <!-- Terrace -->
-              <div onclick="filterCluesByZone('zone_terrace')" class="col-span-3 p-2 rounded-lg border-2 border-purple-500/80 bg-purple-950/30 hover:bg-purple-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_terrace')" class="col-span-3 p-2.5 rounded-xl border-2 border-purple-500/80 bg-purple-950/40 hover:bg-purple-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-purple-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-purple-300 font-bold bg-purple-900/80 px-1 rounded">C-03</span>
-                  <span class="text-[8px] text-purple-400">🌙 야외</span>
+                  <span class="text-[10px] font-mono text-purple-300 font-bold bg-purple-900/90 px-1.5 py-0.5 rounded">C-03</span>
+                  <span class="text-[10px] text-purple-400">🌙</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">테라스</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">티켓 / 꽁초</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">테라스</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">티켓 / 꽁초</div>
                 </div>
-                <div class="text-[8px] text-purple-400/90 font-mono border-t border-purple-500/30 pt-0.5">단서 2건 ➔</div>
+                <div class="text-[10px] text-purple-400 font-bold font-mono border-t border-purple-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 2건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
             </div>
 
             <!-- Bottom Row: Restroom / Hallway / Photo Zone -->
-            <div class="grid grid-cols-12 gap-1.5">
+            <div class="grid grid-cols-12 gap-2">
               <!-- Restroom -->
-              <div onclick="filterCluesByZone('zone_restroom')" class="col-span-3 p-2 rounded-lg border-2 border-emerald-500/80 bg-emerald-950/30 hover:bg-emerald-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_restroom')" class="col-span-3 p-2.5 rounded-xl border-2 border-emerald-500/80 bg-emerald-950/40 hover:bg-emerald-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-emerald-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-emerald-300 font-bold bg-emerald-900/80 px-1 rounded">F-06</span>
-                  <span class="text-[8px] text-emerald-400">🚻</span>
+                  <span class="text-[10px] font-mono text-emerald-300 font-bold bg-emerald-900/90 px-1.5 py-0.5 rounded">F-06</span>
+                  <span class="text-[10px] text-emerald-400">🚻</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">화장실</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">세면대 / 알리바이</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">화장실</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">세면대 / 알리바이</div>
                 </div>
-                <div class="text-[8px] text-emerald-400/90 font-mono border-t border-emerald-500/30 pt-0.5">단서 1건 ➔</div>
+                <div class="text-[10px] text-emerald-400 font-bold font-mono border-t border-emerald-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 1건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
 
               <!-- Hallway & Entrance -->
-              <div onclick="filterCluesByZone('zone_hallway')" class="col-span-4 p-2 rounded-lg border-2 border-cyan-500/80 bg-cyan-950/30 hover:bg-cyan-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_hallway')" class="col-span-4 p-2.5 rounded-xl border-2 border-cyan-500/80 bg-cyan-950/40 hover:bg-cyan-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-cyan-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-cyan-300 font-bold bg-cyan-900/80 px-1 rounded">D-04</span>
-                  <span class="text-[8px] text-cyan-400">🚪 입구</span>
+                  <span class="text-[10px] font-mono text-cyan-300 font-bold bg-cyan-900/90 px-1.5 py-0.5 rounded">D-04</span>
+                  <span class="text-[10px] text-cyan-400">🚪</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">현관 복도</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">와인 흔적 / 중문</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">현관 복도</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">와인 흔적 / 중문</div>
                 </div>
-                <div class="text-[8px] text-cyan-400/90 font-mono border-t border-cyan-500/30 pt-0.5">단서 2건 ➔</div>
+                <div class="text-[10px] text-cyan-400 font-bold font-mono border-t border-cyan-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 2건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
 
               <!-- Photo Zone & DJ Console -->
-              <div onclick="filterCluesByZone('zone_photo')" class="col-span-5 p-2 rounded-lg border-2 border-blue-500/80 bg-blue-950/30 hover:bg-blue-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+              <div onclick="filterCluesByZone('zone_photo')" class="col-span-5 p-2.5 rounded-xl border-2 border-blue-500/80 bg-blue-950/40 hover:bg-blue-900/50 cursor-pointer transition-all flex flex-col justify-between group shadow-lg shadow-blue-950/50">
                 <div class="flex items-center justify-between">
-                  <span class="text-[9px] font-mono text-blue-300 font-bold bg-blue-900/80 px-1 rounded">E-05</span>
-                  <span class="text-[8px] text-blue-400">📸 배전반</span>
+                  <span class="text-[10px] font-mono text-blue-300 font-bold bg-blue-900/90 px-1.5 py-0.5 rounded">E-05</span>
+                  <span class="text-[10px] text-blue-400">📸</span>
                 </div>
-                <div class="my-1.5">
-                  <div class="text-xs font-bold text-white group-hover:text-blue-300 transition-colors">포토존 & 콘솔</div>
-                  <div class="text-[9px] text-gray-300 leading-tight">삼각대 / 가방 / 스위치</div>
+                <div class="my-2">
+                  <div class="text-sm font-bold text-white group-hover:text-blue-300 transition-colors">포토존 & 콘솔</div>
+                  <div class="text-xs text-gray-300 mt-0.5 leading-snug">삼각대 / 가방 / 스위치</div>
                 </div>
-                <div class="text-[8px] text-blue-400/90 font-mono border-t border-blue-500/30 pt-0.5">단서 4건 터치 ➔</div>
+                <div class="text-[10px] text-blue-400 font-bold font-mono border-t border-blue-500/30 pt-1 flex items-center justify-between">
+                  <span>단서 4건</span>
+                  <span>열기 ➔</span>
+                </div>
               </div>
             </div>
           </div>
@@ -725,23 +699,23 @@ ${char.secret}
         <!-- TIMELINE -->
         <div class="card-glass rounded-2xl p-4 border border-gray-800 space-y-3">
           <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2 text-xs font-bold text-white">
+            <div class="flex items-center space-x-2 text-sm font-bold text-white">
               <i class="fa-solid fa-timeline text-pumpkin-500"></i>
-              <span>오늘 밤 사건 타임라인 (21:30 ~ 22:50)</span>
+              <span>오늘 밤 사건 타임라인 (오후 9:30 ~ 오후 10:50)</span>
             </div>
-            <span class="text-[10px] text-pumpkin-400/90 font-mono">24H 수사 기록</span>
+            <span class="text-xs text-pumpkin-400 font-mono">수사 기록</span>
           </div>
 
-          <div class="space-y-2 border-l-2 border-pumpkin-500/30 pl-3 ml-2 text-xs">
+          <div class="space-y-3 border-l-2 border-pumpkin-500/40 pl-3.5 ml-2">
             ${GAME_DATA.timeline.map(t => `
               <div class="relative group pb-1">
-                <div class="absolute -left-[19px] top-1 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900 group-hover:scale-125 transition-transform"></div>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="font-mono text-[11px] text-pumpkin-400 font-bold bg-pumpkin-500/15 px-1.5 py-0.5 rounded border border-pumpkin-500/30">${t.time}</span>
-                  <span class="text-[10px] font-bold text-white bg-gothic-800 px-1.5 py-0.5 rounded border border-gray-700">${t.actors}</span>
-                  <span class="text-[10px] text-crimson-400 font-semibold bg-crimson-900/30 px-1.5 py-0.5 rounded border border-crimson-500/30">${t.tag}</span>
+                <div class="absolute -left-[20px] top-1.5 w-2.5 h-2.5 rounded-full bg-pumpkin-500 border-2 border-gothic-900 group-hover:scale-125 transition-transform shadow-[0_0_8px_rgba(255,115,0,0.8)]"></div>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono text-xs text-pumpkin-400 font-bold bg-pumpkin-500/15 px-2 py-0.5 rounded border border-pumpkin-500/30">${t.time}</span>
+                  <span class="text-xs font-bold text-white bg-gothic-800 px-2 py-0.5 rounded border border-gray-700">${t.actors}</span>
+                  <span class="text-xs text-crimson-400 font-semibold bg-crimson-900/30 px-2 py-0.5 rounded border border-crimson-500/30">${t.tag}</span>
                 </div>
-                <p class="text-gray-300 text-xs mt-1 leading-snug pl-0.5">${t.summary || t.event}</p>
+                <p class="text-gray-200 text-sm mt-1.5 leading-relaxed pl-0.5">${t.summary || t.event}</p>
               </div>
             `).join('')}
           </div>
@@ -798,19 +772,19 @@ ${char.secret}
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
               <span>1차 현장 수색 단서 (총 8개)</span>
             </h4>
-            <div class="grid grid-cols-1 gap-2">
+            <div class="grid grid-cols-1 gap-2.5">
               ${stage1Clues.map(clue => `
-                <div onclick="openClueModal('${clue.id}')" class="card-glass rounded-xl p-2.5 border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all flex items-center justify-between group">
-                  <div class="flex items-center space-x-3">
-                    <div class="w-11 h-11 rounded-lg overflow-hidden border border-pumpkin-500/30 shrink-0 bg-black/60 flex items-center justify-center">
-                      ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<i class="fa-solid fa-file-lines text-sm text-pumpkin-400"></i>`}
+                <div onclick="openClueModal('${clue.id}')" class="card-glass rounded-xl p-3 border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all flex items-center justify-between group shadow-sm">
+                  <div class="flex items-center space-x-3.5">
+                    <div class="w-13 h-13 w-12 h-12 rounded-xl overflow-hidden border border-pumpkin-500/40 shrink-0 bg-black/80 flex items-center justify-center p-0.5">
+                      ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform" />` : `<i class="fa-solid fa-file-lines text-base text-pumpkin-400"></i>`}
                     </div>
                     <div>
-                      <span class="text-[9px] font-mono text-pumpkin-400/90">${clue.location}</span>
-                      <h5 class="text-xs font-bold text-white group-hover:text-pumpkin-400 transition-colors">${clue.title}</h5>
+                      <span class="text-xs font-mono font-semibold text-pumpkin-400">${clue.location}</span>
+                      <h5 class="text-sm font-bold text-white group-hover:text-pumpkin-400 transition-colors mt-0.5">${clue.title}</h5>
                     </div>
                   </div>
-                  <i class="fa-solid fa-chevron-right text-gray-600 text-xs group-hover:text-pumpkin-400 transition-colors"></i>
+                  <i class="fa-solid fa-chevron-right text-gray-500 text-sm group-hover:text-pumpkin-400 transition-colors pr-1"></i>
                 </div>
               `).join('')}
             </div>
@@ -819,14 +793,14 @@ ${char.secret}
 
         <!-- STAGE 2 CLUES -->
         ${currentStage >= 2 ? `
-          <div class="space-y-2 pt-2">
+          <div class="space-y-2.5 pt-2">
             <div class="flex items-center justify-between">
-              <h4 class="text-xs font-bold text-crimson-400 uppercase tracking-wider flex items-center gap-1">
+              <h4 class="text-sm font-bold text-crimson-400 uppercase tracking-wider flex items-center gap-1.5">
                 <i class="fa-solid fa-skull"></i>
                 <span>2차 심층 & 국과수 단서 (총 6개)</span>
               </h4>
               ${currentStage < 3 ? `
-                <button onclick="changeStage(3)" class="text-[10px] bg-crimson-600/30 text-crimson-300 px-2 py-0.5 rounded border border-crimson-500/40 hover:bg-crimson-600 font-bold">
+                <button onclick="changeStage(3)" class="text-xs bg-crimson-600/30 text-crimson-300 px-2.5 py-1 rounded-lg border border-crimson-500/40 hover:bg-crimson-600 font-bold">
                   지금 해금하기
                 </button>
               ` : ''}
@@ -834,23 +808,23 @@ ${char.secret}
 
             ${currentStage < 3 ? `
               <div class="card-glass-red rounded-xl p-4 text-center border border-crimson-500/30 space-y-2">
-                <p class="text-xs text-crimson-300 font-semibold">심층 수색 및 국과수 부검 결과가 봉인 중입니다.</p>
-                <p class="text-[10px] text-gray-400">1차 브리핑 후 상단의 "3. 2차 심층수색" 단계를 누르면 결정적 증거가 해금됩니다.</p>
+                <p class="text-sm text-crimson-300 font-semibold">심층 수색 및 국과수 부검 결과가 봉인 중입니다.</p>
+                <p class="text-xs text-gray-400">1차 브리핑 후 상단의 "3. 2차 심층수색" 단계를 누르면 결정적 증거가 해금됩니다.</p>
               </div>
             ` : `
-              <div class="grid grid-cols-1 gap-2">
+              <div class="grid grid-cols-1 gap-2.5">
                 ${stage2Clues.map(clue => `
-                  <div onclick="openClueModal('${clue.id}')" class="card-glass-red rounded-xl p-2.5 border border-crimson-500/40 hover:border-crimson-500 cursor-pointer transition-all flex items-center justify-between group shadow-md shadow-crimson-900/10">
-                    <div class="flex items-center space-x-3">
-                      <div class="w-11 h-11 rounded-lg overflow-hidden border border-crimson-500/40 shrink-0 bg-black/60 flex items-center justify-center">
-                        ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform" />` : `<i class="fa-solid fa-triangle-exclamation text-sm text-crimson-400"></i>`}
+                  <div onclick="openClueModal('${clue.id}')" class="card-glass-red rounded-xl p-3 border border-crimson-500/40 hover:border-crimson-500 cursor-pointer transition-all flex items-center justify-between group shadow-md shadow-crimson-900/10">
+                    <div class="flex items-center space-x-3.5">
+                      <div class="w-12 h-12 rounded-xl overflow-hidden border border-crimson-500/50 shrink-0 bg-black/80 flex items-center justify-center p-0.5">
+                        ${clue.image ? `<img src="${clue.image}" alt="${clue.title}" class="w-full h-full object-cover rounded-lg group-hover:scale-105 transition-transform" />` : `<i class="fa-solid fa-triangle-exclamation text-base text-crimson-400"></i>`}
                       </div>
                       <div>
-                        <span class="text-[9px] font-mono text-crimson-400 font-bold">${clue.location}</span>
-                        <h5 class="text-xs font-bold text-white group-hover:text-crimson-400 transition-colors">${clue.title}</h5>
+                        <span class="text-xs font-mono font-bold text-crimson-400">${clue.location}</span>
+                        <h5 class="text-sm font-bold text-white group-hover:text-crimson-400 transition-colors mt-0.5">${clue.title}</h5>
                       </div>
                     </div>
-                    <i class="fa-solid fa-chevron-right text-gray-600 text-xs group-hover:text-crimson-400 transition-colors"></i>
+                    <i class="fa-solid fa-chevron-right text-gray-500 text-sm group-hover:text-crimson-400 transition-colors pr-1"></i>
                   </div>
                 `).join('')}
               </div>
@@ -864,6 +838,12 @@ ${char.secret}
     function openClueModal(clueId) {
       const clue = GAME_DATA.clues.find(c => c.id === clueId);
       if (!clue) return;
+
+      const badgeEl = document.getElementById('modal-clue-badge');
+      if (badgeEl) {
+        const clueNum = clue.id.replace('clue_', '');
+        badgeEl.innerText = `증거물 #${clueNum}`;
+      }
 
       document.getElementById('modal-clue-location').innerText = clue.location;
       document.getElementById('modal-clue-title').innerText = clue.title;
