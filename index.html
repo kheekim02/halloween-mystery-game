@@ -81,9 +81,8 @@
     <div class="flex items-center space-x-2">
       <span class="text-2xl animate-pulse">🎃</span>
       <div>
-        <h1 class="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
+        <h1 class="text-sm font-bold tracking-tight text-white">
           <span>붉은 호박의 밤</span>
-          <span class="text-[10px] bg-pumpkin-500/20 text-pumpkin-400 px-1.5 py-0.5 rounded border border-pumpkin-500/30 font-medium">60분 추리</span>
         </h1>
         <p class="text-[10px] text-gray-400" id="current-user-badge">플레이어를 선택하세요</p>
       </div>
@@ -529,14 +528,47 @@ ${char.secret}
           </div>
         </div>
 
-        <!-- SECRET MISSIONS -->
-        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-2">
-          <div class="flex items-center space-x-2 text-xs font-bold text-pumpkin-400">
-            <i class="fa-solid fa-crosshairs"></i>
-            <span>오늘 밤 나의 비밀 개인 미션</span>
+        <!-- ROLEPLAY & PSYCHOLOGICAL WARFARE STRATEGY -->
+        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/40 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2 text-xs font-bold text-pumpkin-400">
+              <i class="fa-solid fa-masks-theater text-sm"></i>
+              <span>오늘 밤 심리전 & 블러핑 공략집</span>
+            </div>
+            <span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-300 px-1.5 py-0.5 rounded border border-pumpkin-500/30">실전 팁</span>
           </div>
-          <div class="p-3 bg-gothic-900/70 rounded-xl border border-gray-800 text-xs text-gray-200 leading-relaxed whitespace-pre-line">
-${char.mission}
+
+          <!-- ACTING TIP -->
+          <div class="p-3 bg-gothic-900/80 rounded-xl border border-gray-800 space-y-1">
+            <div class="text-[11px] font-bold text-yellow-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-clapperboard text-xs"></i>
+              <span>나만의 롤플레잉 연기 팁</span>
+            </div>
+            <p class="text-xs text-gray-300 leading-snug">
+              ${char.roleplay_guide ? char.roleplay_guide.acting_tip : '당당하고 자연스럽게 행동하세요.'}
+            </p>
+          </div>
+
+          <!-- BLUFF DEFENSE -->
+          <div class="p-3 bg-emerald-950/30 rounded-xl border border-emerald-500/30 space-y-1">
+            <div class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-shield-halved text-xs"></i>
+              <span>약점 방어 & 뻔뻔한 둘러대기 (Bluff)</span>
+            </div>
+            <p class="text-xs text-emerald-100 leading-snug">
+              ${char.roleplay_guide ? char.roleplay_guide.bluff_defense : '의심을 받으면 침착하게 반박하세요.'}
+            </p>
+          </div>
+
+          <!-- ATTACK TARGET -->
+          <div class="p-3 bg-crimson-950/30 rounded-xl border border-crimson-500/30 space-y-1">
+            <div class="text-[11px] font-bold text-crimson-400 flex items-center gap-1.5">
+              <i class="fa-solid fa-crosshairs text-xs"></i>
+              <span>선제 공격 & 의심 질문 퀘스트 (Attack)</span>
+            </div>
+            <p class="text-xs text-crimson-100 leading-snug">
+              ${char.roleplay_guide ? char.roleplay_guide.attack_target : '주변 인물들의 모순을 파헤치세요.'}
+            </p>
           </div>
         </div>
       `;
@@ -574,70 +606,105 @@ ${char.mission}
           </div>
         </div>
 
-        <!-- SCENE BLUEPRINT / MAP -->
-        <div class="card-glass rounded-2xl p-4 border border-pumpkin-500/30 space-y-3">
+        <!-- ARCHITECTURAL BLUEPRINT MAP -->
+        <div class="card-glass rounded-2xl p-4 border border-cyan-500/40 space-y-3 bg-slate-950/90 shadow-xl">
           <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-pumpkin-400 flex items-center gap-1.5">
-              <i class="fa-solid fa-map-location-dot"></i>
-              <span>루프탑 파티룸 '루나 하우스' 현장 배치도</span>
+            <h4 class="text-xs font-bold text-cyan-400 flex items-center gap-1.5 font-mono">
+              <i class="fa-solid fa-compass-drafting text-cyan-400"></i>
+              <span>루나 하우스 건축 블루프린트 (터치 시 단서 이동)</span>
             </h4>
-            <span class="text-[10px] text-gray-400">구역 터치 시 단서 이동</span>
+            <span class="text-[10px] text-cyan-500/80 font-mono">SCALE 1:50</span>
           </div>
 
-          <!-- Floor Plan Graphic Box -->
-          <div class="relative w-full rounded-xl overflow-hidden border border-gray-700 bg-gothic-950/80 aspect-[16/9] flex items-center justify-center">
-            <img src="floor_plan.png" alt="루나 하우스 현장 배치도" 
-                 class="w-full h-full object-cover" 
-                 onerror="this.style.display='none'; document.getElementById('floor-plan-placeholder').style.display='flex';" />
-            <div id="floor-plan-placeholder" class="hidden absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-gradient-to-br from-gothic-900 to-gothic-950">
-              <i class="fa-solid fa-compass-drafting text-pumpkin-500/60 text-2xl mb-1"></i>
-              <span class="text-xs font-bold text-white tracking-wide">루나 하우스 수사 구역도</span>
-              <span class="text-[10px] text-gray-400 mt-0.5">VIP룸 · 바 카운터 · 테라스 · 복도 · 포토존 · 화장실</span>
-            </div>
-          </div>
-          
-          <div class="grid grid-cols-2 gap-2 text-xs pt-1">
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-crimson-500 cursor-pointer transition-all">
-              <div class="font-bold text-crimson-400 flex items-center gap-1 mb-0.5">
-                <span>🛋️ VIP 휴게실</span>
-                <span class="text-[9px] bg-crimson-500/20 px-1 py-0.2 rounded text-crimson-300 font-bold">시신</span>
-              </div>
-              <p class="text-[10px] text-gray-400">소파, 유리 테이블, 해골 빨대 잔</p>
+          <!-- Interactive 2D Blueprint Grid Layout -->
+          <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2 shadow-inner">
+            <div class="text-[10px] text-cyan-400/70 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
+              <span>LEVEL: 8F ROOFTOP</span>
+              <span>GRID REF: LUNA-OCT31</span>
             </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-pumpkin-500 cursor-pointer transition-all">
-              <div class="font-bold text-pumpkin-400 flex items-center gap-1 mb-0.5">
-                <span>🍸 바 카운터 & 솥</span>
+            <!-- Top Row: VIP Lounge / Bar / Terrace -->
+            <div class="grid grid-cols-12 gap-1.5">
+              <!-- VIP Lounge (Crime Scene) -->
+              <div onclick="filterCluesByZone('zone_vip')" class="col-span-5 p-2 rounded-lg border-2 border-crimson-500 bg-crimson-950/40 hover:bg-crimson-900/50 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-crimson-300 font-bold bg-crimson-900/80 px-1 rounded">A-01</span>
+                  <span class="text-[8px] text-crimson-400 font-bold animate-pulse">💀 시신</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-crimson-300 transition-colors">VIP 휴게실</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">소파 / 칵테일 잔 / 빨대</div>
+                </div>
+                <div class="text-[8px] text-crimson-400/90 font-mono border-t border-crimson-500/30 pt-0.5">단서 2건 터치 ➔</div>
               </div>
-              <p class="text-[10px] text-gray-400">마녀 솥 볼, 공용 종이 빨대통</p>
+
+              <!-- Bar Counter -->
+              <div onclick="filterCluesByZone('zone_bar')" class="col-span-4 p-2 rounded-lg border-2 border-amber-500/80 bg-amber-950/30 hover:bg-amber-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-amber-300 font-bold bg-amber-900/80 px-1 rounded">B-02</span>
+                  <span class="text-[8px] text-amber-400">🍸 음료</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-amber-300 transition-colors">바 카운터</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">마녀솥 / 종이빨대</div>
+                </div>
+                <div class="text-[8px] text-amber-400/90 font-mono border-t border-amber-500/30 pt-0.5">단서 2건 터치 ➔</div>
+              </div>
+
+              <!-- Terrace -->
+              <div onclick="filterCluesByZone('zone_terrace')" class="col-span-3 p-2 rounded-lg border-2 border-purple-500/80 bg-purple-950/30 hover:bg-purple-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-purple-300 font-bold bg-purple-900/80 px-1 rounded">C-03</span>
+                  <span class="text-[8px] text-purple-400">🌙 야외</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-purple-300 transition-colors">테라스</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">티켓 / 꽁초</div>
+                </div>
+                <div class="text-[8px] text-purple-400/90 font-mono border-t border-purple-500/30 pt-0.5">단서 2건 ➔</div>
+              </div>
             </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-purple-500 cursor-pointer transition-all">
-              <div class="font-bold text-purple-400 flex items-center gap-1 mb-0.5">
-                <span>🌙 루프탑 테라스</span>
+            <!-- Bottom Row: Restroom / Hallway / Photo Zone -->
+            <div class="grid grid-cols-12 gap-1.5">
+              <!-- Restroom -->
+              <div onclick="filterCluesByZone('zone_restroom')" class="col-span-3 p-2 rounded-lg border-2 border-emerald-500/80 bg-emerald-950/30 hover:bg-emerald-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-emerald-300 font-bold bg-emerald-900/80 px-1 rounded">F-06</span>
+                  <span class="text-[8px] text-emerald-400">🚻</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-emerald-300 transition-colors">화장실</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">세면대 / 알리바이</div>
+                </div>
+                <div class="text-[8px] text-emerald-400/90 font-mono border-t border-emerald-500/30 pt-0.5">단서 1건 ➔</div>
               </div>
-              <p class="text-[10px] text-gray-400">방콕 티켓, 담배꽁초, 난간</p>
-            </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-yellow-500 cursor-pointer transition-all">
-              <div class="font-bold text-yellow-400 flex items-center gap-1 mb-0.5">
-                <span>🚪 현관 복도</span>
+              <!-- Hallway & Entrance -->
+              <div onclick="filterCluesByZone('zone_hallway')" class="col-span-4 p-2 rounded-lg border-2 border-cyan-500/80 bg-cyan-950/30 hover:bg-cyan-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-cyan-300 font-bold bg-cyan-900/80 px-1 rounded">D-04</span>
+                  <span class="text-[8px] text-cyan-400">🚪 입구</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-cyan-300 transition-colors">현관 복도</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">와인 흔적 / 중문</div>
+                </div>
+                <div class="text-[8px] text-cyan-400/90 font-mono border-t border-cyan-500/30 pt-0.5">단서 2건 ➔</div>
               </div>
-              <p class="text-[10px] text-gray-400">배달 야식 통화지, 와인 자국</p>
-            </div>
 
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-blue-500 cursor-pointer transition-all">
-              <div class="font-bold text-blue-400 flex items-center gap-1 mb-0.5">
-                <span>📸 포토존 & 배전반</span>
+              <!-- Photo Zone & DJ Console -->
+              <div onclick="filterCluesByZone('zone_photo')" class="col-span-5 p-2 rounded-lg border-2 border-blue-500/80 bg-blue-950/30 hover:bg-blue-900/40 cursor-pointer transition-all flex flex-col justify-between group">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-mono text-blue-300 font-bold bg-blue-900/80 px-1 rounded">E-05</span>
+                  <span class="text-[8px] text-blue-400">📸 배전반</span>
+                </div>
+                <div class="my-1.5">
+                  <div class="text-xs font-bold text-white group-hover:text-blue-300 transition-colors">포토존 & 콘솔</div>
+                  <div class="text-[9px] text-gray-300 leading-tight">삼각대 / 가방 / 스위치</div>
+                </div>
+                <div class="text-[8px] text-blue-400/90 font-mono border-t border-blue-500/30 pt-0.5">단서 4건 터치 ➔</div>
               </div>
-              <p class="text-[10px] text-gray-400">삼각대, 암전 조명 스위치</p>
-            </div>
-
-            <div onclick="setTab('clues')" class="p-2.5 bg-gothic-900/90 rounded-xl border border-gray-800 hover:border-emerald-500 cursor-pointer transition-all">
-              <div class="font-bold text-emerald-400 flex items-center gap-1 mb-0.5">
-                <span>🚻 안쪽 화장실</span>
-              </div>
-              <p class="text-[10px] text-gray-400">세면대, 주현의 구토 알리바이</p>
             </div>
           </div>
         </div>
@@ -994,48 +1061,111 @@ ${GAME_DATA.epilogue.full_truth}
         `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
-    // Audio / BGM Synthesizer (Spooky Ambient Synth using Web Audio API)
-    function toggleAudio() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    // Toast Notification
+    function showToast(message) {
+      let toast = document.getElementById('app-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = 'fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-gothic-900/95 border border-pumpkin-500/60 text-white text-xs px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md transition-all duration-300 pointer-events-none opacity-0 flex items-center gap-2';
+        document.body.appendChild(toast);
       }
-      const icon = document.getElementById('bgm-icon');
+      toast.innerHTML = `<span>🎃</span><span>${message}</span>`;
+      toast.classList.remove('opacity-0', '-translate-y-2');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', '-translate-y-2');
+      }, 2200);
+    }
 
-      if (isAudioPlaying) {
-        if (window.bgmOsc) {
-          window.bgmOsc.stop();
-          window.bgmOsc.disconnect();
+    // Blueprint Zone Filter
+    function filterCluesByZone(zoneId) {
+      if (currentStage < 2) {
+        currentStage = 2;
+        saveLocalStorage();
+        updateStageTabStyles();
+        updateClueBadgeCount();
+      }
+      setTab('clues');
+
+      const zone = GAME_DATA.floor_plan ? GAME_DATA.floor_plan.zones.find(z => z.id === zoneId) : null;
+      if (zone) {
+        showToast(`[${zone.name}] 구역 단서 확인`);
+        if (zone.clue_ids && zone.clue_ids.length > 0) {
+          setTimeout(() => {
+            openClueModal(zone.clue_ids[0]);
+          }, 250);
         }
-        isAudioPlaying = false;
-        icon.className = 'fa-solid fa-volume-xmark text-gray-400';
-      } else {
-        playSpookyTone();
-        isAudioPlaying = true;
-        icon.className = 'fa-solid fa-volume-high text-pumpkin-400 animate-pulse';
       }
     }
 
-    function playSpookyTone() {
+    // Audio / BGM Synthesizer (Spooky Ambient Synth using Web Audio API)
+    let spookyInterval = null;
+    async function toggleAudio() {
+      const icon = document.getElementById('bgm-icon');
+
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+
+        if (isAudioPlaying) {
+          stopSpookyMusic();
+          isAudioPlaying = false;
+          if (icon) icon.className = 'fa-solid fa-volume-xmark text-gray-400';
+          showToast('🔇 BGM 음소거');
+        } else {
+          startSpookyMusic();
+          isAudioPlaying = true;
+          if (icon) icon.className = 'fa-solid fa-volume-high text-pumpkin-400 animate-pulse';
+          showToast('🔊 할로윈 테마 BGM 재생');
+        }
+      } catch (err) {
+        console.error('Audio playback error:', err);
+        showToast('⚠️ 오디오 재생 권한을 확인해주세요');
+      }
+    }
+
+    function startSpookyMusic() {
+      stopSpookyMusic();
+      playChimeChord();
+      spookyInterval = setInterval(() => {
+        if (isAudioPlaying) playChimeChord();
+      }, 4500);
+    }
+
+    function stopSpookyMusic() {
+      if (spookyInterval) {
+        clearInterval(spookyInterval);
+        spookyInterval = null;
+      }
+    }
+
+    function playChimeChord() {
       if (!audioCtx) return;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+      // D minor pentatonic spooky arpeggio notes (D4, F4, A4, C5)
+      const freqs = [293.66, 349.23, 440.0, 523.25];
+      freqs.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.25);
 
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(65.41, audioCtx.currentTime); // Low C2
-      
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime + idx * 0.25);
+        gain.gain.exponentialRampToValueAtTime(0.06, audioCtx.currentTime + idx * 0.25 + 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + idx * 0.25 + 1.8);
 
-      // Low pass filter
-      const filter = audioCtx.createBiquadFilter();
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      window.bgmOsc = osc;
+        osc.start(audioCtx.currentTime + idx * 0.25);
+        osc.stop(audioCtx.currentTime + idx * 0.25 + 1.9);
+      });
     }
 
     // Initialize on page load
