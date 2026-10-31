@@ -81,8 +81,11 @@
     <div class="flex items-center space-x-2.5">
       <span class="text-2xl animate-pulse">🎃</span>
       <div>
-        <h1 class="text-base font-bold tracking-tight text-white">
+        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
           <span>붉은 호박의 밤</span>
+          <button id="sync-status-badge" onclick="manualCheckSync()" class="text-[9px] px-1.5 py-0.5 rounded-full border border-gray-700 bg-gray-900 text-gray-400 font-medium transition-all" title="서버 동기화 상태 (터치하여 재연결)">
+            ⚪ 로컬 백업 모드
+          </button>
         </h1>
         <p class="text-xs text-gray-300 font-medium" id="current-user-badge">플레이어를 선택하세요</p>
       </div>
@@ -235,6 +238,190 @@
     let audioCtx = null;
     let isAudioPlaying = false;
 
+    // --- REAL-TIME WI-FI SYNC ENGINE (HYBRID / OFFLINE FALLBACK) ---
+    let isOnlineMode = false;
+    let syncPollingTimer = null;
+    let isAutoAdvancing = false;
+
+    async function initSyncEngine() {
+      await checkServerConnection(false);
+      startSyncPolling();
+    }
+
+    async function checkServerConnection(showToastAlert = false) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        const res = await fetch('/api/state?t=' + Date.now(), { 
+          cache: 'no-store',
+          signal: controller.signal 
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const data = await res.json();
+          isOnlineMode = true;
+          updateSyncIndicator(true);
+          applyServerState(data);
+          pushMyVotesToServer(data);
+          if (showToastAlert) showToast('🟢 Wi-Fi 실시간 동기화 서버에 연결되었습니다!');
+          return true;
+        }
+      } catch (err) {
+        // Fallback to local mode
+      }
+
+      isOnlineMode = false;
+      updateSyncIndicator(false);
+      if (showToastAlert) showToast('⚪ 로컬 백업 모드로 작동 중입니다. (호스트 구두 진행)');
+      return false;
+    }
+
+    function manualCheckSync() {
+      showToast('🔄 서버 연결 상태 확인 중...');
+      checkServerConnection(true);
+    }
+
+    function startSyncPolling() {
+      if (syncPollingTimer) clearInterval(syncPollingTimer);
+      // Poll every 1.5 seconds for instant gauge updates across all devices
+      syncPollingTimer = setInterval(async () => {
+        try {
+          const res = await fetch('/api/state?t=' + Date.now(), { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            if (!isOnlineMode) {
+              isOnlineMode = true;
+              updateSyncIndicator(true);
+            }
+            applyServerState(data);
+          } else {
+            if (isOnlineMode) {
+              isOnlineMode = false;
+              updateSyncIndicator(false);
+            }
+          }
+        } catch (e) {
+          if (isOnlineMode) {
+            isOnlineMode = false;
+            updateSyncIndicator(false);
+          }
+        }
+      }, 1500);
+    }
+
+    function updateSyncIndicator(online) {
+      const badge = document.getElementById('sync-status-badge');
+      if (!badge) return;
+      if (online) {
+        badge.className = 'text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/50 bg-emerald-950/90 text-emerald-300 font-semibold flex items-center gap-1 cursor-pointer shadow';
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>실시간 동기화 ON';
+      } else {
+        badge.className = 'text-[9px] px-2 py-0.5 rounded-full border border-gray-700 bg-gray-900 text-gray-400 font-medium cursor-pointer';
+        badge.innerHTML = '⚪ 로컬 백업 모드';
+      }
+    }
+
+    function pushMyVotesToServer(serverState) {
+      if (!currentUser || !isOnlineMode || !serverState) return;
+      if (midtermVotes[currentUser] && (!serverState.midtermVotes || !serverState.midtermVotes[currentUser])) {
+        sendVoteToServer('midterm', currentUser, midtermVotes[currentUser]);
+      }
+      if (votes[currentUser] && (!serverState.finalVotes || !serverState.finalVotes[currentUser])) {
+        sendVoteToServer('final', currentUser, votes[currentUser]);
+      }
+    }
+
+    async function sendVoteToServer(type, voterId, targetId) {
+      if (!isOnlineMode) return;
+      try {
+        const res = await fetch('/api/vote', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, voterId, targetId })
+        });
+        if (res.ok) {
+          const resData = await res.json();
+          if (resData && resData.state) {
+            applyServerState(resData.state);
+          }
+        }
+      } catch (err) {
+        console.warn('Vote network dispatch failed (saved locally):', err);
+      }
+    }
+
+    function applyServerState(data) {
+      if (!data) return;
+      let hasVoteChange = false;
+
+      // 1. Merge Midterm Votes
+      if (data.midtermVotes) {
+        for (const [v, t] of Object.entries(data.midtermVotes)) {
+          if (midtermVotes[v] !== t) {
+            midtermVotes[v] = t;
+            hasVoteChange = true;
+          }
+        }
+      }
+
+      // 2. Merge Final Votes
+      if (data.finalVotes) {
+        for (const [v, t] of Object.entries(data.finalVotes)) {
+          if (votes[v] !== t) {
+            votes[v] = t;
+            hasVoteChange = true;
+          }
+        }
+      }
+
+      const totalParticipants = (GAME_DATA && GAME_DATA.characters) ? GAME_DATA.characters.length : 9;
+      const totalMid = Object.keys(midtermVotes).length;
+      const totalFin = Object.keys(votes).length;
+
+      // STAGE 3 AUTO ADVANCE (when 9/9 completed)
+      if (totalMid >= totalParticipants && currentStage === 3) {
+        if (unlockedStage < 4) {
+          unlockedStage = 4;
+          isMidtermRevealed = true;
+          saveLocalStorage();
+          updateStageTabStyles();
+          showToast('🎉 전원(9명) 1차 중간 투표 완료! 4단계(심층수색)가 해금되었습니다.');
+          hasVoteChange = true;
+        }
+      }
+
+      // STAGE 5 AUTO ADVANCE (when 9/9 completed)
+      if (totalFin >= totalParticipants && currentStage === 5) {
+        if (unlockedStage < 6) {
+          unlockedStage = 6;
+          isFinalRevealed = true;
+          saveLocalStorage();
+          updateStageTabStyles();
+          showToast('🎉 9명 전원 최종 투표 완료! 1.8초 후 진범이 공개됩니다.');
+          hasVoteChange = true;
+
+          // Auto-advance all phones to Stage 6 after brief celebratory pause
+          if (!isAutoAdvancing) {
+            isAutoAdvancing = true;
+            setTimeout(() => {
+              isAutoAdvancing = false;
+              if (currentStage === 5) {
+                changeStage(6);
+              }
+            }, 1800);
+          }
+        }
+      }
+
+      if (hasVoteChange) {
+        saveLocalStorage();
+        if (currentTab === 'vote') {
+          renderCurrentTab();
+        }
+      }
+    }
+
     // Load Scenario Data
     async function initApp() {
       try {
@@ -243,6 +430,9 @@
         
         // Restore local storage if exists
         loadLocalStorage();
+
+        // Initialize Real-time Wi-Fi Sync (with graceful offline fallback)
+        initSyncEngine();
 
         // Render initial UI
         renderHeader();
@@ -257,8 +447,8 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset (v1.5.0: 9-player expansion & clean age removal)
-      const APP_VERSION = 'v1.5.0-clean9';
+      // Clean production reset (v1.6.0: Real-time Wi-Fi Voting Sync & Hybrid Backup Engine)
+      const APP_VERSION = 'v1.6.0-sync';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);
@@ -393,6 +583,11 @@
       renderHeader();
       renderCurrentTab();
 
+      // 서버 연결 시 내 기존 투표 상태 업로드
+      if (isOnlineMode) {
+        checkServerConnection(false);
+      }
+
       // 역할 선택 완료 시 60분 타이머 자동 시작
       if (!isTimerRunning) {
         toggleTimer();
@@ -400,6 +595,7 @@
     }
 
     function renderHeader() {
+      updateSyncIndicator(isOnlineMode);
       if (!currentUser || !GAME_DATA) return;
       const char = GAME_DATA.characters.find(c => c.id === currentUser);
       if (char) {
@@ -1381,6 +1577,7 @@ ${char.secret}
                 <span class="text-amber-400 font-bold flex items-center gap-1.5">
                   <i class="fa-solid fa-users-viewfinder"></i>
                   <span>중간 투표 진행 현황</span>
+                  ${isOnlineMode ? '<span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-normal">실시간 동기화 ON</span>' : '<span class="text-[9px] bg-gray-800 text-gray-400 border border-gray-700 px-1.5 py-0.2 rounded font-normal">로컬 백업 모드</span>'}
                 </span>
                 <span class="font-mono font-bold text-white text-sm">
                   ${totalMidtermVotes} / ${totalParticipants}명 완료
@@ -1392,15 +1589,15 @@ ${char.secret}
               </div>
               <div class="flex items-center justify-between text-[11px] text-gray-400">
                 <span>${myMidtermVote ? '✓ 나의 투표 완료 (비밀 유지 중)' : '⏳ 아직 투표하지 않음'}</span>
-                <span>전원 완료 시 결과 공개</span>
+                <span>${isOnlineMode ? '9명 전원 투표 시 실시간 자동 공개' : '전원 완료 시 결과 공개'}</span>
               </div>
             </div>
 
-            <!-- REVEAL / CLOSE BUTTON -->
-            <div class="pt-1 flex items-center justify-center gap-2">
+            <!-- REVEAL / CLOSE BUTTON & BACKUP HOST OVERRIDE -->
+            <div class="pt-1 flex flex-col items-center justify-center gap-1.5">
               ${!isMidtermFinished ? `
                 <button onclick="toggleMidtermReveal(true)" class="text-xs text-amber-400/90 hover:text-amber-300 underline font-mono">
-                  [진행/호스트] 투표 마감하고 결과 전체 공개하기 ➔
+                  ${isOnlineMode ? '[호스트 수동 마감] 결과 즉시 강제 공개하기 ➔' : '📢 [호스트 구두 신호] "전원 투표 완료! 넘어가겠습니다" ➔ 결과 공개'}
                 </button>
               ` : `
                 <button onclick="toggleMidtermReveal(false)" class="text-xs text-gray-400 hover:text-gray-200 underline font-mono">
@@ -1581,6 +1778,7 @@ ${char.secret}
               <span class="text-crimson-400 font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-users-viewfinder"></i>
                 <span>최종 투표 진행 현황</span>
+                ${isOnlineMode ? '<span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-normal">실시간 동기화 ON</span>' : '<span class="text-[9px] bg-gray-800 text-gray-400 border border-gray-700 px-1.5 py-0.2 rounded font-normal">로컬 백업 모드</span>'}
               </span>
               <span class="font-mono font-bold text-white text-sm">
                 ${totalFinalVotes} / ${totalParticipants}명 완료
@@ -1592,7 +1790,7 @@ ${char.secret}
             </div>
             <div class="flex items-center justify-between text-[11px] text-gray-400">
               <span>${myFinalVote ? '✓ 나의 최종 투표 완료 (비밀 유지 중)' : '⏳ 아직 투표하지 않음'}</span>
-              <span>전원 투표 후 진범과 전체 공개</span>
+              <span>${isOnlineMode ? '9명 전원 투표 시 실시간 자동 엔딩 공개' : '전원 투표 후 진범과 전체 공개'}</span>
             </div>
           </div>
         </div>
@@ -1683,18 +1881,29 @@ ${char.secret}
           <!-- UNIFIED STAGE 5 ACTION / WAITING BOX -->
           <div class="pt-3">
             ${myFinalVote ? `
-              <div class="card-glass rounded-2xl p-4 border border-crimson-500/60 bg-crimson-950/30 text-center space-y-2.5 shadow-xl animate-fade-in">
+              <div class="card-glass rounded-2xl p-4 border border-crimson-500/60 bg-crimson-950/30 text-center space-y-3 shadow-xl animate-fade-in">
                 <div class="text-xs font-bold text-crimson-400 flex items-center justify-center gap-1.5">
                   <i class="fa-solid fa-circle-check text-sm"></i>
                   <span>나의 최종 비밀 투표 완료!</span>
                 </div>
-                <p class="text-xs text-gray-300 leading-relaxed">
-                  친구들이 모두 투표를 마칠 때까지 잠시 기다려 주세요.<br>
-                  <strong class="text-white">진행자(호스트)가 "전원 투표 완료되었습니다"라고 구두 신호를 주면</strong> 아래 버튼을 터치하세요!
-                </p>
+                ${totalFinalVotes >= totalParticipants ? `
+                  <div class="p-2.5 rounded-xl bg-crimson-950/80 border border-crimson-500/60 text-white font-bold text-xs sm:text-sm animate-pulse">
+                    🎉 9명 전원 투표 완료! 잠시 후 자동으로 진범이 공개됩니다.
+                  </div>
+                ` : `
+                  <p class="text-xs text-gray-300 leading-relaxed">
+                    ${isOnlineMode ? `
+                      친구들이 투표를 진행 중입니다... (현재 <strong class="text-amber-400">${totalFinalVotes} / ${totalParticipants}명</strong> 완료)<br>
+                      <span class="text-[11px] text-gray-400">※ 9명 전원 완료 시 자동으로 화면이 진범 공개로 전환됩니다.</span>
+                    ` : `
+                      친구들이 모두 투표를 마칠 때까지 잠시 기다려 주세요.<br>
+                      <strong class="text-white">진행자(호스트)가 "전원 투표 완료되었습니다"라고 구두 신호를 주면</strong> 아래 버튼을 터치하세요!
+                    `}
+                  </p>
+                `}
                 <button onclick="advanceToStage(6)" class="w-full bg-gradient-to-r from-crimson-700 to-crimson-600 hover:from-crimson-600 hover:to-crimson-500 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg shadow-crimson-900/50 flex items-center justify-center gap-2">
                   <i class="fa-solid fa-skull"></i>
-                  <span>[호스트 신호 시 터치] 6. 진범 공개 & 최종 결과 확인하기 ➔</span>
+                  <span>${isOnlineMode ? '6. 진범 공개 & 최종 결과 지금 확인하기 ➔' : '📢 [호스트 신호 시 터치] 6. 진범 공개 & 최종 결과 확인하기 ➔'}</span>
                 </button>
               </div>
             ` : `
@@ -1885,6 +2094,7 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
       renderCurrentTab();
       const targetChar = GAME_DATA.characters.find(c => c.id === targetCharId);
       showToast(`🗳️ 1차 중간 지목: [${targetChar ? targetChar.real_name : '용의자'}] 투표 완료!`);
+      sendVoteToServer('midterm', currentUser, targetCharId);
     }
 
     function submitFinalVote(targetCharId) {
@@ -1894,6 +2104,7 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
       renderCurrentTab();
       const targetChar = GAME_DATA.characters.find(c => c.id === targetCharId);
       showToast(`⚖️ 최종 지목: [${targetChar ? targetChar.real_name : '용의자'}] 투표 완료!`);
+      sendVoteToServer('final', currentUser, targetCharId);
     }
 
     function getSuspectNote(charId) {
