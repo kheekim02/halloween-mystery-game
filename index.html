@@ -146,7 +146,7 @@
     </button>
     <button onclick="setTab('players')" id="nav-btn-players" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-masks-theater text-lg mb-0.5"></i>
-      <span class="text-xs font-bold">용의자8인</span>
+      <span class="text-xs font-bold">용의자9인</span>
     </button>
     <button onclick="setTab('vote')" id="nav-btn-vote" class="nav-btn flex flex-col items-center justify-center text-gray-400 hover:text-gray-200">
       <i class="fa-solid fa-check-to-slot text-lg mb-0.5"></i>
@@ -257,8 +257,8 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset (v1.4.0: progressive stage unlocking & unified voting actions)
-      const APP_VERSION = 'v1.4.0-progressive';
+      // Clean production reset (v1.5.0: 9-player expansion & clean age removal)
+      const APP_VERSION = 'v1.5.0-clean9';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);
@@ -351,7 +351,6 @@
             <div class="min-w-0 flex-1">
               <div class="text-xs font-bold text-white flex items-center gap-1.5 truncate">
                 <span>${char.real_name}</span>
-                <span class="text-[10px] text-gray-400">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
               </div>
               <div class="text-[10px] text-pumpkin-400/90 truncate">${char.character_name} · ${char.role_title}</div>
             </div>
@@ -563,7 +562,6 @@
             <div>
               <div class="flex items-center gap-2">
                 <h2 class="text-base font-bold text-white tracking-tight">${char.real_name}</h2>
-                <span class="text-xs text-gray-400">${char.birth_year}</span>
               </div>
               <p class="text-xs font-semibold text-pumpkin-400">${char.character_name} · ${char.role_title}</p>
             </div>
@@ -658,7 +656,7 @@ ${char.secret}
             <div>
               <div class="flex items-center gap-2">
                 <h3 class="text-base font-bold text-white">[사망] ${victim.name}</h3>
-                <span class="text-xs text-gray-400">(${victim.age}세, ${victim.gender})</span>
+                <span class="text-xs text-gray-400">(${victim.gender})</span>
               </div>
               <p class="text-xs text-crimson-400 font-semibold">${victim.role}</p>
             </div>
@@ -827,45 +825,33 @@ ${char.secret}
                 <span>1차 구역 수색 규칙</span>
               </p>
               <p class="text-gray-300 leading-relaxed text-xs sm:text-sm">
-                아래 8개 구역 중 가장 의심스러운 <strong class="text-white">1개 구역</strong>을 터치해 정밀 수색을 진행하세요. (공간 환경 단서 1건 획득). 획득한 단서는 친구들과 대화로 공유해야 합니다!
+                아래 9개 구역 중 가장 의심스러운 <strong class="text-white">1개 구역</strong>을 터치해 정밀 수색을 진행하세요. (공간 환경 단서 1건 획득). 획득한 단서는 친구들과 대화로 공유해야 합니다!
               </p>
             </div>
 
-            <!-- Interactive 2D Blueprint Grid -->
+            <!-- Interactive 2D Blueprint Grid (3x3 Layout) -->
             <div class="relative w-full rounded-xl p-3 border-2 border-cyan-500/50 bg-[#09111e] bg-[radial-gradient(#1e3a8a_1px,transparent_1px)] [background-size:14px_14px] space-y-2.5 shadow-inner">
               <div class="text-xs text-cyan-400/80 font-mono flex justify-between border-b border-cyan-500/30 pb-1">
-                <span>LEVEL: 8F PENTHOUSE (8 ZONES)</span>
+                <span>LEVEL: 8F PENTHOUSE (9 ZONES)</span>
                 <span>※ 구역 터치 시 정밀 수색 진행</span>
               </div>
 
-              <!-- Top Row: VIP Lounge / Bar / Terrace / Smoking Area -->
+              <!-- 3x3 Blueprint Layout -->
               <div class="grid grid-cols-12 gap-2">
-                <!-- VIP Lounge (A-01) -->
-                ${renderZoneBox('zone_vip', 'col-span-6 sm:col-span-3', searchedZoneId)}
+                <!-- Row 1: VIP Lounge / Bar / Terrace -->
+                ${renderZoneBox('zone_vip', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_bar', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_terrace', 'col-span-4', searchedZoneId)}
 
-                <!-- Bar Counter (B-02) -->
-                ${renderZoneBox('zone_bar', 'col-span-6 sm:col-span-3', searchedZoneId)}
+                <!-- Row 2: Hallway / Photo Zone / Restroom -->
+                ${renderZoneBox('zone_hallway', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_photo', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_restroom', 'col-span-4', searchedZoneId)}
 
-                <!-- Terrace (C-03) -->
-                ${renderZoneBox('zone_terrace', 'col-span-6 sm:col-span-3', searchedZoneId)}
-
-                <!-- Smoking Area (H-08) -->
-                ${renderZoneBox('zone_smoking', 'col-span-6 sm:col-span-3', searchedZoneId)}
-              </div>
-
-              <!-- Bottom Row: Hallway / Photo Zone / Restroom / Locker -->
-              <div class="grid grid-cols-12 gap-2">
-                <!-- Hallway (D-04) -->
-                ${renderZoneBox('zone_hallway', 'col-span-6 sm:col-span-3', searchedZoneId)}
-
-                <!-- Photo Zone (E-05) -->
-                ${renderZoneBox('zone_photo', 'col-span-6 sm:col-span-3', searchedZoneId)}
-
-                <!-- Restroom (F-06) -->
-                ${renderZoneBox('zone_restroom', 'col-span-6 sm:col-span-3', searchedZoneId)}
-
-                <!-- Locker Room (G-07) -->
-                ${renderZoneBox('zone_locker', 'col-span-6 sm:col-span-3', searchedZoneId)}
+                <!-- Row 3: Locker Room / Smoking Area / Pantry -->
+                ${renderZoneBox('zone_locker', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_smoking', 'col-span-4', searchedZoneId)}
+                ${renderZoneBox('zone_pantry', 'col-span-4', searchedZoneId)}
               </div>
             </div>
 
@@ -1035,7 +1021,7 @@ ${char.secret}
         statusTag = '<span class="text-gray-500">미수색</span><span class="text-gray-500">🔒</span>';
       }
 
-      const icon = zone.code === 'A-01' ? '💀' : zone.code === 'B-02' ? '🍸' : zone.code === 'C-03' ? '🌙' : zone.code === 'D-04' ? '🚪' : zone.code === 'E-05' ? '📸' : '🚻';
+      const icon = zone.code === 'A-01' ? '💀' : zone.code === 'B-02' ? '🍸' : zone.code === 'C-03' ? '🌙' : zone.code === 'D-04' ? '🚪' : zone.code === 'E-05' ? '📸' : zone.code === 'F-06' ? '🚻' : zone.code === 'G-07' ? '🔐' : zone.code === 'H-08' ? '🚬' : '🍳';
 
       return `
         <div onclick="clickZoneBox('${zoneId}')" class="${colSpan} p-2.5 rounded-xl border-2 ${borderStyle} cursor-pointer transition-all flex flex-col justify-between group shadow-md">
@@ -1181,7 +1167,7 @@ ${char.secret}
           <div>
             <h3 class="text-sm font-bold text-white flex items-center gap-1.5">
               <i class="fa-solid fa-masks-theater text-pumpkin-500"></i>
-              <span>용의자 8인 프로필 & 탐문 수첩</span>
+              <span>용의자 9인 프로필 & 탐문 수첩</span>
             </h3>
             <p class="text-[10px] text-gray-400">참석 경위와 알리바이는 직접 질문하고 나만의 수첩에 기록하세요.</p>
           </div>
@@ -1205,7 +1191,6 @@ ${char.secret}
                     <div>
                       <div class="flex items-center gap-1.5">
                         <span class="text-xs font-bold text-white">${char.real_name}</span>
-                        <span class="text-[10px] text-gray-400">${char.birth_year}</span>
                         ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1.5 py-0.2 rounded border border-pumpkin-500/30">나</span>' : ''}
                       </div>
                       <p class="text-[10px] text-pumpkin-400/90 font-medium">${char.character_name} · ${char.role_title}</p>
@@ -1504,7 +1489,6 @@ ${char.secret}
                     <div class="min-w-0 flex-1">
                       <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 truncate">
                         <span>${char.real_name}</span>
-                        <span class="text-[10px] text-gray-400 font-normal">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
                         ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1 rounded border border-pumpkin-500/30 shrink-0">나</span>' : ''}
                       </div>
                       <p class="text-[11px] text-amber-400/90 truncate">${char.character_name} · ${char.role_title}</p>
@@ -1674,7 +1658,6 @@ ${char.secret}
                   <div class="min-w-0 flex-1">
                     <div class="text-xs sm:text-sm font-bold text-white flex items-center gap-1.5 truncate">
                       <span>${char.real_name}</span>
-                      <span class="text-[10px] text-gray-400 font-normal">(${char.birth_year ? char.birth_year.split(' ')[0] : ''})</span>
                       ${isMe ? '<span class="text-[9px] bg-pumpkin-500/20 text-pumpkin-400 font-bold px-1 rounded border border-pumpkin-500/30 shrink-0">나</span>' : ''}
                     </div>
                     <p class="text-[11px] text-pumpkin-400/90 truncate">${char.character_name} · ${char.role_title}</p>
@@ -2127,7 +2110,7 @@ ${GAME_DATA.epilogue.autopsy_trick_detail}
       const scapegoatVotes = scapegoat ? (finalVoteCounts[scapegoat.id] || 0) : 0;
       const scapegoatText = scapegoatVotes > 0 ? `${scapegoat.real_name} (${scapegoatVotes}표 획득)` : '없음';
 
-      const copyText = `🎃 [붉은 호박의 밤: 8인의 할로윈 미스터리 - 최종 결과] 🎃
+      const copyText = `🎃 [붉은 호박의 밤: 9인의 할로윈 미스터리 - 최종 결과] 🎃
 
 ⚖️ 최종 집계:
 - 진범: 문지영 (전 약혼녀 / 바텐더)
