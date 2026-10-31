@@ -454,8 +454,8 @@
     }
 
     function loadLocalStorage() {
-      // Clean production reset (v1.6.0: Real-time Wi-Fi Voting Sync & Hybrid Backup Engine)
-      const APP_VERSION = 'v1.6.0-sync';
+      // Live party production reset (v2.0.0: Clean start for all participants)
+      const APP_VERSION = 'v2.0.0-live-party';
       if (localStorage.getItem('mystery_app_version') !== APP_VERSION) {
         localStorage.clear();
         localStorage.setItem('mystery_app_version', APP_VERSION);

@@ -59,6 +59,7 @@ class MysteryServerHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         clean_path = self.path.split('?')[0]
         if clean_path in ('/api/state', '/api/votes'):
+            load_runtime_state()
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
             self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
