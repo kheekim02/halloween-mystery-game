@@ -81,10 +81,10 @@
     <div class="flex items-center space-x-2.5">
       <span class="text-2xl animate-pulse">🎃</span>
       <div>
-        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+        <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
           <span>붉은 호박의 밤</span>
-          <button id="sync-status-badge" onclick="manualCheckSync()" class="text-[9px] px-1.5 py-0.5 rounded-full border border-gray-700 bg-gray-900 text-gray-400 font-medium transition-all" title="서버 동기화 상태 (터치하여 재연결)">
-            ⚪ 로컬 백업 모드
+          <button id="sync-status-badge" onclick="manualCheckSync()" class="inline-flex items-center justify-center p-0.5 rounded-full focus:outline-none transition-transform active:scale-95" title="동기화 상태 (초록: 실시간 연결 / 회색: 로컬 모드)">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-gray-600 border border-gray-500/50"></span>
           </button>
         </h1>
         <p class="text-xs text-gray-300 font-medium" id="current-user-badge">플레이어를 선택하세요</p>
@@ -314,11 +314,18 @@
       const badge = document.getElementById('sync-status-badge');
       if (!badge) return;
       if (online) {
-        badge.className = 'text-[9px] px-2 py-0.5 rounded-full border border-emerald-500/50 bg-emerald-950/90 text-emerald-300 font-semibold flex items-center gap-1 cursor-pointer shadow';
-        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>실시간 동기화 ON';
+        badge.title = '초록색 불: 실시간 Wi-Fi 동기화 활성화됨 (클릭하여 상태 확인)';
+        badge.innerHTML = `
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.9)]"></span>
+          </span>
+        `;
       } else {
-        badge.className = 'text-[9px] px-2 py-0.5 rounded-full border border-gray-700 bg-gray-900 text-gray-400 font-medium cursor-pointer';
-        badge.innerHTML = '⚪ 로컬 백업 모드';
+        badge.title = '회색 불: 로컬 백업 모드 (클릭하여 서버 재연결)';
+        badge.innerHTML = `
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-gray-600 border border-gray-500/50"></span>
+        `;
       }
     }
 
@@ -1577,7 +1584,7 @@ ${char.secret}
                 <span class="text-amber-400 font-bold flex items-center gap-1.5">
                   <i class="fa-solid fa-users-viewfinder"></i>
                   <span>중간 투표 진행 현황</span>
-                  ${isOnlineMode ? '<span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-normal">실시간 동기화 ON</span>' : '<span class="text-[9px] bg-gray-800 text-gray-400 border border-gray-700 px-1.5 py-0.2 rounded font-normal">로컬 백업 모드</span>'}
+                  <span class="w-2 h-2 rounded-full ${isOnlineMode ? 'bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)]' : 'bg-gray-500'} inline-block" title="${isOnlineMode ? '실시간 동기화' : '로컬 백업 모드'}"></span>
                 </span>
                 <span class="font-mono font-bold text-white text-sm">
                   ${totalMidtermVotes} / ${totalParticipants}명 완료
@@ -1778,7 +1785,7 @@ ${char.secret}
               <span class="text-crimson-400 font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-users-viewfinder"></i>
                 <span>최종 투표 진행 현황</span>
-                ${isOnlineMode ? '<span class="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-1.5 py-0.2 rounded font-normal">실시간 동기화 ON</span>' : '<span class="text-[9px] bg-gray-800 text-gray-400 border border-gray-700 px-1.5 py-0.2 rounded font-normal">로컬 백업 모드</span>'}
+                <span class="w-2 h-2 rounded-full ${isOnlineMode ? 'bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)]' : 'bg-gray-500'} inline-block" title="${isOnlineMode ? '실시간 동기화' : '로컬 모드'}"></span>
               </span>
               <span class="font-mono font-bold text-white text-sm">
                 ${totalFinalVotes} / ${totalParticipants}명 완료
